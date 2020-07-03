@@ -1,4 +1,5 @@
 #include "frames.h"
+#include <chrono> 
 
 std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
   std::list<cv::Mat> new_frames;
@@ -28,9 +29,14 @@ int main(int argc,char ** argv){
     return 1;
   }
   std::string in_path(argv[1]);
-  std::string out_path(argv[2]);  
+  std::string out_path(argv[2]);
+
+  auto t1 = std::chrono::steady_clock::now();
   Dataset dataset=read_seqs(in_path);
   Dataset new_dataset= transform_seqs(dataset);
   cout <<"***************"<<endl;
   save_seqs(new_dataset,out_path);
+  auto t2 = std::chrono::steady_clock::now();
+  auto d_milli=std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
+  cout <<"time " << d_milli << endl;
 }

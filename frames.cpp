@@ -14,7 +14,7 @@ Dataset read_seqs(std::string in_path){
   return dataset;
 }
 
-void save_seqs(Dataset dataset,std::string out_path){
+void save_seqs(Dataset & dataset,std::string out_path){
   make_dir(out_path);
   for( auto const& pair : dataset ){
     std::string out_i=out_path +"/"+ pair.first;
@@ -36,7 +36,7 @@ std::list<cv::Mat> read_frames(std::string seq_path){
   return frames;
 }
 
-void save_frames(std::list<cv::Mat> frames,std::string out_i){
+void save_frames(std::list<cv::Mat> & frames,std::string out_i){
   make_dir(out_i);
   int j=0;
   for (auto it = frames.begin(); it!=frames.end(); ++it){
