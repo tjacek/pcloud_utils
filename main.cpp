@@ -12,7 +12,20 @@ std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
   return new_frames;//new_frames;
 }
 
-Dataset transform_seqs(Dataset& dataset){
+void transform_seqs(std::string in_path,std::string out_path){
+  make_dir(out_path);
+  std::list<string> seq_paths=get_paths(in_path);
+  for(auto it = seq_paths.begin(); it!=seq_paths.end(); ++it){
+    std::string seq_path_i=(*it);
+    std::list<cv::Mat> frames=read_frames(seq_path_i);
+    std::string out_i=out_path +"/"+ get_name(seq_path_i);
+    frames=smooth_frames(frames);
+    cout << out_i << endl;
+    save_frames(frames,out_i);
+  }  
+}
+
+/*Dataset transform_seqs(Dataset& dataset){
   Dataset new_dataset;
   for( auto const& pair : dataset ){
     std:string name=pair.first;
@@ -21,7 +34,7 @@ Dataset transform_seqs(Dataset& dataset){
     new_dataset.insert ( std::pair<std::string,std::list<cv::Mat>>(name,frames) );
   }  
   return new_dataset;
-}
+}*/
 
 int main(int argc,char ** argv){
   if(argc <3){
@@ -32,10 +45,11 @@ int main(int argc,char ** argv){
   std::string out_path(argv[2]);
 
   auto t1 = std::chrono::steady_clock::now();
-  Dataset dataset=read_seqs(in_path);
+  transform_seqs(in_path,out_path);
+/*  Dataset dataset=read_seqs(in_path);
   Dataset new_dataset= transform_seqs(dataset);
   cout <<"***************"<<endl;
-  save_seqs(new_dataset,out_path);
+  save_seqs(new_dataset,out_path);*/
   auto t2 = std::chrono::steady_clock::now();
   auto d_milli=std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
   cout <<"time " << d_milli << endl;
