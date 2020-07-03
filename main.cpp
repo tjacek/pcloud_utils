@@ -1,4 +1,5 @@
 #include "frames.h"
+#include "pclouds.h"
 #include <chrono> 
 
 std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
