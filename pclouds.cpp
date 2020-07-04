@@ -1,5 +1,14 @@
 #include "pclouds.h"
 
+std::list<pcl::PointCloud<pcl::PointXYZ>::Ptr> img_to_pcl(std::list<cv::Mat> frames){
+  std::list<pcl::PointCloud<pcl::PointXYZ>::Ptr> new_frames;
+  for(auto it = frames.begin(); it!=frames.end(); ++it){
+    cv::Mat frame_i= (*it);
+    new_frames.push_back(img_to_pcl(frame_i));
+  }
+  return new_frames;
+}
+
 pcl::PointCloud<pcl::PointXYZ>::Ptr img_to_pcl(cv::Mat img){
   std::cout << img.rows <<" " << img.cols << "\n";
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
