@@ -3,16 +3,12 @@
 #include <chrono> 
 
 std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
-  std::list<cv::Mat> new_frames;
-  for(auto it = frames.begin(); it!=frames.end(); ++it){
-    cv::Mat frame_i= (*it);
-    cv::Mat new_frame_i;
-    cv::medianBlur(frame_i,new_frame_i,15);
-    new_frames.push_back(new_frame_i);
-  }
-  return new_frames;//new_frames;
+  auto fun= [](cv::Mat frame) -> cv::Mat{ 
+                  cv::medianBlur(frame,frame,15);
+                  return frame; };
+  std::for_each(frames.begin(),frames.end(),fun);
+  return frames;
 }
-
 
 void transform_seqs(std::string in_path,std::string out_path){
   make_dir(out_path);
@@ -21,10 +17,10 @@ void transform_seqs(std::string in_path,std::string out_path){
     std::string seq_path_i=(*it);
     std::list<cv::Mat> frames=read_frames(seq_path_i);
     std::string out_i=out_path +"/"+ get_name(seq_path_i);
-//    frames=smooth_frames(frames);
-    auto pcloud=img_to_pcl(frames.front());
-    cv::Mat frame_i=pcl_to_img(pcloud);
-    frames.push_back(frame_i);
+    frames=smooth_frames(frames);
+//    auto pcloud=img_to_pcl(frames.front());
+//    cv::Mat frame_i=pcl_to_img(pcloud);
+//    frames.push_back(frame_i);
     cout << out_i << endl;
     save_frames(frames,out_i);
   }  
