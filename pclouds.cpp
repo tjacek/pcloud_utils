@@ -53,10 +53,45 @@ std::list<cv::Mat> pcl_to_img(std::list<PCloud> pclouds){
   return frames;
 }
 
-/*std::list<PCloud> transform(std::list<PCloud> pclouds){
+std::list<PCloud> transform(std::list<PCloud> pclouds){
   std::list<PCloud> new_pclouds;
   auto fun= [](PCloud pcloud) -> PCloud{ 
+                  pcloud=simple_ransac(pcloud);
                   return pcloud; };
-  std::transform(pclouds.begin(),pclouds.end(),new_pclouds,fun);
-  return new_frames;
-}*/
+  std::transform(pclouds.begin(),pclouds.end(),std::back_inserter(new_pclouds),fun);
+  return new_pclouds;
+}
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr simple_ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr pcloud){
+  
+  pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+  pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+  // Create the segmentation object
+  pcl::SACSegmentation<pcl::PointXYZ> seg;
+  // Optional
+  seg.setOptimizeCoefficients (true);
+  // Mandatory
+  seg.setModelType (pcl::SACMODEL_PLANE);
+  seg.setMethodType (pcl::SAC_RANSAC);
+  seg.setDistanceThreshold (5.0);
+
+  seg.setInputCloud (pcloud);
+  seg.segment (*inliers, *coefficients);
+  for(int i=0;i<coefficients->values.size();i++){
+    std::cout << coefficients->values[i] << "\n";
+  }
+  return extract_cloud(inliers,pcloud);
+}
+
+PCloud extract_cloud(pcl::PointIndices::Ptr cls,PCloud cloud){
+  if(cls->indices.size()>3000){
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::ExtractIndices<pcl::PointXYZ> extract;
+    extract.setInputCloud (cloud);
+    extract.setIndices (cls);
+    extract.setNegative (true);
+    extract.filter (* cloud_cluster);
+    return cloud_cluster;
+  }
+  return cloud;
+}
