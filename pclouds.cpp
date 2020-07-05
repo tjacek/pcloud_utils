@@ -1,15 +1,16 @@
 #include "pclouds.h"
 
-std::list<pcl::PointCloud<pcl::PointXYZ>::Ptr> img_to_pcl(std::list<cv::Mat> frames){
-  std::list<pcl::PointCloud<pcl::PointXYZ>::Ptr> new_frames;
+std::list<PCloud> img_to_pcl(std::list<cv::Mat> frames){
+  std::list<PCloud> new_frames;
   for(auto it = frames.begin(); it!=frames.end(); ++it){
     cv::Mat frame_i= (*it);
     new_frames.push_back(img_to_pcl(frame_i));
   }
+//  std::transform(frames.begin(),frames.end(),new_frames,img_to_pcl);
   return new_frames;
 }
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr img_to_pcl(cv::Mat img){
+PCloud img_to_pcl(cv::Mat img){
   std::cout << img.rows <<" " << img.cols << "\n";
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
   for(int i=0;i<img.rows;i++){
@@ -25,21 +26,37 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr img_to_pcl(cv::Mat img){
   return cloud;
 }
 
-cv::Mat pcl_to_img(pcl::PointCloud<pcl::PointXYZ>::Ptr pcloud){
-//  std::cout << dim.x;
-  cv::Mat img=cv::Mat::zeros(240,320,CV_8UC1);
+cv::Mat pcl_to_img(pcl::PointCloud<pcl::PointXYZ>::Ptr &pcloud){
+  pcl::PointXYZ dim(240,320,255);
+  return pcl_to_img(pcloud,dim);
+}
+
+cv::Mat pcl_to_img(pcl::PointCloud<pcl::PointXYZ>::Ptr & pcloud,pcl::PointXYZ dim){
+  cv::Mat img=cv::Mat::zeros(dim.x,dim.y,CV_8UC1);
   for (size_t i = 0; i < pcloud->points.size(); ++i)
   {
     int x=(int) pcloud->points[i].x ;
     int y=(int) pcloud->points[i].y;
     float z=(float) pcloud->points[i].z;
-/*    z= ( z/(dim.z+3) )*255.0;
-    z= 255.0-z;
-    if(z<0) z=0;
-    if(z>255) z=255;*/
-//    if(x<dim.x && y<dim.y){
+    if(x<dim.x && y<dim.y){
       img.at<uchar>(x,y)=(uchar) z;
-//    }
+    }
   }
   return img;
 }
+
+std::list<cv::Mat> pcl_to_img(std::list<PCloud> pclouds){
+  std::list<cv::Mat> frames;
+  auto fun= [](PCloud pcloud) -> cv::Mat{ 
+                  return pcl_to_img(pcloud); };
+  std::transform(pclouds.begin(),pclouds.end(),std::back_inserter(frames),fun);
+  return frames;
+}
+
+/*std::list<PCloud> transform(std::list<PCloud> pclouds){
+  std::list<PCloud> new_pclouds;
+  auto fun= [](PCloud pcloud) -> PCloud{ 
+                  return pcloud; };
+  std::transform(pclouds.begin(),pclouds.end(),new_pclouds,fun);
+  return new_frames;
+}*/

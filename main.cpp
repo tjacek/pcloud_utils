@@ -17,12 +17,11 @@ void transform_seqs(std::string in_path,std::string out_path){
     std::string seq_path_i=(*it);
     std::list<cv::Mat> frames=read_frames(seq_path_i);
     std::string out_i=out_path +"/"+ get_name(seq_path_i);
-    frames=smooth_frames(frames);
-//    auto pcloud=img_to_pcl(frames.front());
-//    cv::Mat frame_i=pcl_to_img(pcloud);
-//    frames.push_back(frame_i);
+    std::list<cv::Mat>  new_frames=smooth_frames(frames);
+    list<PCloud> pclouds=img_to_pcl(new_frames);
+    std::list<cv::Mat> final_frames=pcl_to_img(pclouds);
     cout << out_i << endl;
-    save_frames(frames,out_i);
+    save_frames(final_frames,out_i);
   }  
 }
 
