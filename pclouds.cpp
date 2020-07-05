@@ -21,5 +21,25 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr img_to_pcl(cv::Mat img){
 //      }
     }
   }
+  std::cout << cloud->points.size() << std::endl;
   return cloud;
+}
+
+cv::Mat pcl_to_img(pcl::PointCloud<pcl::PointXYZ>::Ptr pcloud){
+//  std::cout << dim.x;
+  cv::Mat img=cv::Mat::zeros(240,320,CV_8UC1);
+  for (size_t i = 0; i < pcloud->points.size(); ++i)
+  {
+    int x=(int) pcloud->points[i].x ;
+    int y=(int) pcloud->points[i].y;
+    float z=(float) pcloud->points[i].z;
+/*    z= ( z/(dim.z+3) )*255.0;
+    z= 255.0-z;
+    if(z<0) z=0;
+    if(z>255) z=255;*/
+//    if(x<dim.x && y<dim.y){
+      img.at<uchar>(x,y)=(uchar) z;
+//    }
+  }
+  return img;
 }

@@ -13,6 +13,7 @@ std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
   return new_frames;//new_frames;
 }
 
+
 void transform_seqs(std::string in_path,std::string out_path){
   make_dir(out_path);
   std::list<string> seq_paths=get_paths(in_path);
@@ -20,7 +21,10 @@ void transform_seqs(std::string in_path,std::string out_path){
     std::string seq_path_i=(*it);
     std::list<cv::Mat> frames=read_frames(seq_path_i);
     std::string out_i=out_path +"/"+ get_name(seq_path_i);
-    frames=smooth_frames(frames);
+//    frames=smooth_frames(frames);
+    auto pcloud=img_to_pcl(frames.front());
+    cv::Mat frame_i=pcl_to_img(pcloud);
+    frames.push_back(frame_i);
     cout << out_i << endl;
     save_frames(frames,out_i);
   }  

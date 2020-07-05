@@ -5,6 +5,7 @@
 #include <opencv2/core/core.hpp>
 //#include <opencv2/highgui/highgui.hpp>
 //#include "opencv2/imgproc/imgproc.hpp"
-
+ 
 pcl::PointCloud<pcl::PointXYZ>::Ptr img_to_pcl(cv::Mat depth_img);
 std::list<pcl::PointCloud<pcl::PointXYZ>::Ptr> img_to_pcl(std::list<cv::Mat> depth_img);
+cv::Mat pcl_to_img(pcl::PointCloud<pcl::PointXYZ>::Ptr pcloud);
