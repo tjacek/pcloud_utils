@@ -19,5 +19,5 @@ std::list<cv::Mat> pcl_to_img(std::list<PCloud> pclouds);
 
 std::list<PCloud> transform(std::list<PCloud> pclouds);
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr simple_ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr pcloud);
+PCloud simple_ransac(PCloud pcloud);
 PCloud extract_cloud(pcl::PointIndices::Ptr cls,PCloud cloud);

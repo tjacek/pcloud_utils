@@ -2,6 +2,10 @@
 #include "pclouds.h"
 #include <chrono> 
 
+void transform_seqs(std::string in_path,std::string out_path);
+std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames);
+void preproc_seq(std::string seg_path_i,std::string out_i);
+
 std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
   auto fun= [](cv::Mat frame) -> cv::Mat{ 
                   cv::medianBlur(frame,frame,15);
@@ -15,15 +19,19 @@ void transform_seqs(std::string in_path,std::string out_path){
   std::list<string> seq_paths=get_paths(in_path);
   for(auto it = seq_paths.begin(); it!=seq_paths.end(); ++it){
     std::string seq_path_i=(*it);
-    std::list<cv::Mat> frames=read_frames(seq_path_i);
     std::string out_i=out_path +"/"+ get_name(seq_path_i);
-    std::list<cv::Mat>  new_frames=smooth_frames(frames);
-    list<PCloud> pclouds=img_to_pcl(new_frames);
-    list<PCloud> trans_pclouds=transform(pclouds);
-    std::list<cv::Mat> final_frames=pcl_to_img(trans_pclouds);
-    cout << out_i << endl;
-    save_frames(final_frames,out_i);
+    preproc_seq(seq_path_i,out_i);
   }  
+}
+
+void preproc_seq(std::string seq_path_i,std::string out_i){
+  std::list<cv::Mat> frames=read_frames(seq_path_i);
+  std::list<cv::Mat>  new_frames=smooth_frames(frames);
+  list<PCloud> pclouds=img_to_pcl(new_frames);
+  list<PCloud> trans_pclouds=transform(pclouds);
+  std::list<cv::Mat> final_frames=pcl_to_img(trans_pclouds);
+  cout << out_i << endl;
+  save_frames(final_frames,out_i);
 }
 
 /*Dataset transform_seqs(Dataset& dataset){
