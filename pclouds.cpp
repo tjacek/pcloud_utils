@@ -81,7 +81,6 @@ PCloud simple_ransac(PCloud pcloud){
 }
 
 PCloud extract_cloud(pcl::PointIndices::Ptr cls,PCloud cloud){
-  if(cls->indices.size()>3000){
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::ExtractIndices<pcl::PointXYZ> extract;
     extract.setInputCloud (cloud);
@@ -89,6 +88,17 @@ PCloud extract_cloud(pcl::PointIndices::Ptr cls,PCloud cloud){
     extract.setNegative (true);
     extract.filter (* cloud_cluster);
     return cloud_cluster;
-  }
   return cloud;
+}
+
+PCloud extract_cloud(pcl::PointIndices cls,PCloud cloud){
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+  for (int i=0;i<cls.indices.size();i++){
+    int point_index=cls.indices[i];
+    cloud_cluster->points.push_back (cloud->points[point_index]);  
+  }
+  cloud_cluster->width = cloud_cluster->points.size ();
+  cloud_cluster->height = 1;
+  cloud_cluster->is_dense = true;
+  return cloud_cluster;//cloud_filtered ;
 }

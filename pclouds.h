@@ -21,3 +21,4 @@ std::list<PCloud> transform(std::list<PCloud> pclouds);
 
 PCloud simple_ransac(PCloud pcloud);
 PCloud extract_cloud(pcl::PointIndices::Ptr cls,PCloud cloud);
+PCloud extract_cloud(pcl::PointIndices cls,PCloud cloud);
