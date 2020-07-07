@@ -9,3 +9,5 @@ Dataset read_seqs(std::string in_path);
 void save_seqs(Dataset & dataset,std::string out_path);
 std::list<cv::Mat> read_frames(std::string seq_path);
 void save_frames(std::list<cv::Mat> & frames,std::string seq_path);
+
+//std::list<cv::Mat> transform_frames(std::list<cv::Mat> & frames,cv::Mat *fun(cv::Mat));

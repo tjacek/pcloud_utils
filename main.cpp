@@ -34,7 +34,7 @@ void frames_segmentation(std::string seq_path_i,std::string out_i){
   int j=0;
   for(auto it = frames.begin(); it!=frames.end(); ++it){
     cv::Mat frame_j= (*it);
-    std::string frame_path_j=out_i+"/frame"+std::to_string(j);
+    std::string frame_path_j=out_i+"/frame_"+std::to_string(j);
     cout << frame_path_j << endl;
     PCloud  pcloud_j=img_to_pcl(frame_j); 
     pcloud_segmentation(pcloud_j,frame_path_j);

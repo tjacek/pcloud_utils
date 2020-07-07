@@ -8,7 +8,6 @@ Dataset read_seqs(std::string in_path){
     std::string name=get_name(seq_path_i);
     std::list<cv::Mat> frames=read_frames(seq_path_i);
     cout << name <<" " << frames.size() << endl;
-
     dataset.insert ( std::pair<std::string,std::list<cv::Mat>>(name,frames) );
   }
   return dataset;
@@ -41,7 +40,8 @@ void save_frames(std::list<cv::Mat> & frames,std::string out_i){
   int j=0;
   for (auto it = frames.begin(); it!=frames.end(); ++it){
     cv::Mat frame_j=(*it);
-    std::string path_j=out_i+"/frame"+std::to_string(j)+".png";
+    std::string frame_id=get_name(out_i)+"_"+std::to_string(j);  
+    std::string path_j=out_i+"/"+frame_id+".png";
     cv::imwrite(path_j, frame_j);
     j++;
   }  
