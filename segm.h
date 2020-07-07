@@ -1,4 +1,5 @@
 #include "pclouds.h"
+#include "frames.h"
 #include <pcl/segmentation/region_growing.h>
 #include <pcl/search/kdtree.h>
 #include <pcl/filters/passthrough.h>

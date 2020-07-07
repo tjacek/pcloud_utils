@@ -1,21 +1,20 @@
 #include "segm.h"
 
 void pcloud_segmentation(PCloud & pcloud,std::string seq_path){
-
-}
-
-/*void full_segmentation(std::list<PCloud> & pclouds){
-  for(auto it = pclouds.begin(); it!=pclouds.end(); ++it){
-    PCloud pcloud_i=(*it);
-    std::vector <pcl::PointIndices> segm_i=growth_segmentation(pcloud_i);
-    std::list<cv::Mat> clusters;
-    for(auto it2 = segm_i.begin(); it2!=segm_i.end(); ++it2){
-      pcl::PointIndices segm_ij=(*it2);
-      PCloud clust_ij=extract_cloud(segm_ij,pcloud_i);
-      clusters.push_back(pcl_to_img(clust_ij));
-    }
+  std::vector<pcl::PointIndices> clust=growth_segmentation(pcloud);
+  std::list<cv::Mat> new_frames;
+  for(auto it = clust.begin(); it!=clust.end(); ++it){
+    pcl::PointIndices ind_i=(*it);
+    PCloud subcloud_i=extract_cloud(ind_i,pcloud);
+    cv::Mat frame_i=pcl_to_img(subcloud_i);
+    new_frames.push_back(frame_i);
   }
-}*/
+  save_frames(new_frames,seq_path);
+//  auto fun= [](pcl::PointIndices in_i) -> cv::Mat{ 
+//                  PCloud subcloud_i=extract_cloud(in_i,pcloud);
+//                  return pcl_to_img(subcloud_i); };
+//  std::transform(clust.begin(),clust.end(),std::back_inserter(new_frames),fun);
+}
 
 std::list<PCloud> simple_segm(std::list<PCloud> & pclouds){
   std::list<PCloud> new_pclouds;
