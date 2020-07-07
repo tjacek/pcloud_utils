@@ -1,5 +1,22 @@
 #include "segm.h"
 
+void pcloud_segmentation(PCloud & pcloud,std::string seq_path){
+
+}
+
+/*void full_segmentation(std::list<PCloud> & pclouds){
+  for(auto it = pclouds.begin(); it!=pclouds.end(); ++it){
+    PCloud pcloud_i=(*it);
+    std::vector <pcl::PointIndices> segm_i=growth_segmentation(pcloud_i);
+    std::list<cv::Mat> clusters;
+    for(auto it2 = segm_i.begin(); it2!=segm_i.end(); ++it2){
+      pcl::PointIndices segm_ij=(*it2);
+      PCloud clust_ij=extract_cloud(segm_ij,pcloud_i);
+      clusters.push_back(pcl_to_img(clust_ij));
+    }
+  }
+}*/
+
 std::list<PCloud> simple_segm(std::list<PCloud> & pclouds){
   std::list<PCloud> new_pclouds;
   for(auto it = pclouds.begin(); it!=pclouds.end(); ++it){

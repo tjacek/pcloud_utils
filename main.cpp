@@ -7,7 +7,7 @@
 void transform_seqs(std::string in_path,std::string out_path);
 std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames);
 void preproc_seq(std::string seg_path_i,std::string out_i);
-
+void frames_segmentation(std::string seq_path_i,std::string out_i);
 
 void transform_seqs(std::string in_path,std::string out_path){
   make_dir(out_path);
@@ -15,7 +15,8 @@ void transform_seqs(std::string in_path,std::string out_path){
   for(auto it = seq_paths.begin(); it!=seq_paths.end(); ++it){
     std::string seq_path_i=(*it);
     std::string out_i=out_path +"/"+ get_name(seq_path_i);
-    preproc_seq(seq_path_i,out_i);
+//    preproc_seq(seq_path_i,out_i);
+    frames_segmentation(seq_path_i,out_i);
   }  
 }
 
@@ -25,6 +26,20 @@ std::list<cv::Mat> smooth_frames(const std::list<cv::Mat>& frames){
                   return frame; };
   std::for_each(frames.begin(),frames.end(),fun);
   return frames;
+}
+
+void frames_segmentation(std::string seq_path_i,std::string out_i){
+  std::list<cv::Mat> frames=read_frames(seq_path_i);
+  make_dir(out_i);
+  int j=0;
+  for(auto it = frames.begin(); it!=frames.end(); ++it){
+    cv::Mat frame_j= (*it);
+    std::string frame_path_j=out_i+"/frame"+std::to_string(j);
+    cout << frame_path_j << endl;
+    PCloud  pcloud_j=img_to_pcl(frame_j); 
+    pcloud_segmentation(pcloud_j,frame_path_j);
+    j++;
+  }
 }
 
 void preproc_seq(std::string seq_path_i,std::string out_i){
