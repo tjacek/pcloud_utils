@@ -21,5 +21,3 @@ def make_model(img_shape=(64,64,1)):
               optimizer=keras.optimizers.SGD(lr=0.001,  momentum=0.9, nesterov=True))
     model.summary()
     return model
-
-make_model()

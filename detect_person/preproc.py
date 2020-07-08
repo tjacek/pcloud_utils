@@ -3,20 +3,22 @@ import data
 
 def preproc_exp(in_path,out_path):
     d=data.read_dataset(in_path)
-    preproc_d=preproc_dir(d)
+    preproc_d=preproc_dict(d)
     data.save_seqs(preproc_d,out_path)
 
-def preproc_dir(data):
+def preproc_dict(data):
     return {name_i: [standarize(frame_i) 
                         for frame_i in data_i] 
                 for name_i,data_i in data.items()}
 
 def standarize(img_i,dim=(96,96)):
     x,y,w,h=cv2.boundingRect(img_i)
-    if(w<dim[0] or h<dim[1]):
-        return None	
+    w=dim[1] if( w<dim[1]) else w
+    h=dim[0] if( h<dim[0]) else h
+    x=img_i.shape[1]-w if(img_i.shape[1]<(x+w)) else x
+    y=img_i.shape[0]-h if(img_i.shape[0]<(y+h)) else y
     img_i=img_i[x:x+w,y:y+h]
-    print(img_i.shape)
     return cv2.resize(img_i,dim)
 
-preproc_exp("dataset","test")
+if __name__ == "__main__":
+    preproc_exp("dataset","test")
