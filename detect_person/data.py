@@ -27,7 +27,6 @@ def read_frames(seq_i):
 def save_frames(frames,out_path):
     make_dir(out_path)
     for i,frame_i in enumerate(frames):
-        print(type(frame_i))
         if(not frame_i is None):
              out_i="%s/frame_%d.png" % (out_path,i)
              cv2.imwrite(out_i,frame_i) 
