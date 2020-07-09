@@ -1,6 +1,20 @@
-import os
+import random,os
+from itertools import chain
 import cv2
 
+def make_dataset(in_path,out_path,k=10):
+    paths=[ get_dirs(cat_i)
+            for cat_i in get_dirs(in_path)]
+    paths=list(chain.from_iterable(paths))
+    selected=[random.choice(paths) for i in range(k)]
+    make_dir(out_path)
+    pos_path=out_path+"/neg"
+    make_dir(pos_path)
+    frames=[]
+    for path_i in selected:
+        frames+=read_frames(path_i)
+    save_frames(frames,pos_path)    
+       
 def read_dataset(in_path):
     seq_paths=get_dirs(in_path)
     return{ path_i.split('/')[-1]:read_frames(path_i) 
@@ -45,5 +59,5 @@ def make_dir(path):
     if(not os.path.isdir(path)):
         os.mkdir(path)
 
-#d=read_dataset("dataset")
-#print(d.keys())
+if __name__=="__main__":
+    make_dataset("../segm","dataset")
