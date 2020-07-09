@@ -15,6 +15,15 @@ def make_dataset(in_path,out_path,k=10):
         frames+=read_frames(path_i)
     save_frames(frames,pos_path)    
        
+def read_clusters(in_path):
+    cats=get_dirs(in_path)
+    clusters={}
+    for cat_i in cats:
+        cat_id=cat_i.split("/")[-1]
+        clusters[cat_id]={frame_j.split("/")[-1]:read_frames(frame_j) 
+                            for frame_j in get_dirs(cat_i)}
+    return clusters
+
 def read_dataset(in_path):
     seq_paths=get_dirs(in_path)
     return{ path_i.split('/')[-1]:read_frames(path_i) 
