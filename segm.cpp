@@ -86,7 +86,7 @@ std::vector <pcl::PointIndices> min_cut(PCloud & cloud){
   seg.setForegroundPoints (foreground_points);
 
   seg.setSigma (1.0);
-  seg.setRadius (32);
+  seg.setRadius (200.0);
   seg.setNumberOfNeighbours( 14); //(14);
   seg.setSourceWeight (0.2);
 
