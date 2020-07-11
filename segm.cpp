@@ -1,20 +1,13 @@
 #include "segm.h"
 
 void pcloud_segmentation(PCloud & pcloud,std::string seq_path){
-//  std::vector<pcl::PointIndices> clust=growth_segmentation(pcloud);
   std::vector<pcl::PointIndices> clust=min_cut(pcloud);
   std::list<cv::Mat> new_frames;
-  for(auto it = clust.begin(); it!=clust.end(); ++it){
-    pcl::PointIndices ind_i=(*it);
-    PCloud subcloud_i=extract_cloud(ind_i,pcloud);
-    cv::Mat frame_i=pcl_to_img(subcloud_i);
-    new_frames.push_back(frame_i);
-  }
+  auto fun=[&pcloud](pcl::PointIndices in_i) -> cv::Mat{ 
+                  PCloud subcloud_i=extract_cloud(in_i,pcloud);
+                  return pcl_to_img(subcloud_i); };
+  std::transform(clust.begin(),clust.end(),std::back_inserter(new_frames),fun);
   save_frames(new_frames,seq_path);
-//  auto fun= [](pcl::PointIndices in_i) -> cv::Mat{ 
-//                  PCloud subcloud_i=extract_cloud(in_i,pcloud);
-//                  return pcl_to_img(subcloud_i); };
-//  std::transform(clust.begin(),clust.end(),std::back_inserter(new_frames),fun);
 }
 
 std::list<PCloud> simple_segm(std::list<PCloud> & pclouds){
@@ -77,7 +70,7 @@ std::vector <pcl::PointIndices> min_cut(PCloud & cloud){
   Eigen::Vector4f centroid;
   pcl::compute3DCentroid(*cloud, centroid);
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr foreground_points(new pcl::PointCloud<pcl::PointXYZ> ());
+  PCloud foreground_points(new PCloud());
   pcl::PointXYZ point;
   point.x = centroid[0];//120;
   point.y = centroid[1];//160;
@@ -85,9 +78,9 @@ std::vector <pcl::PointIndices> min_cut(PCloud & cloud){
   foreground_points->points.push_back(point);
   seg.setForegroundPoints (foreground_points);
 
-  seg.setSigma (1.0);
-  seg.setRadius (200.0);
-  seg.setNumberOfNeighbours( 14); //(14);
+  seg.setSigma (4.0);
+  seg.setRadius (400.0);
+  seg.setNumberOfNeighbours(50); 
   seg.setSourceWeight (0.2);
 
   std::vector <pcl::PointIndices> clusters;
