@@ -1,4 +1,4 @@
-import random,os
+import random,os,re
 from itertools import chain
 import cv2
 
@@ -23,6 +23,15 @@ def read_clusters(in_path):
         clusters[cat_id]={frame_j.split("/")[-1]:read_frames(frame_j) 
                             for frame_j in get_dirs(cat_i)}
     return clusters
+
+def save_clusters(cluster_dict,out_path):
+    make_dir(out_path)
+    for name_i,seq_i in cluster_dict.items():
+        out_i="%s/%s" % (out_path,name_i)
+        make_dir(out_i)
+        for j,frame_j in enumerate(seq_i):
+            out_j="%s/%d" %(out_i,j)
+            save_frames(frame_j,out_j)
 
 def read_dataset(in_path):
     seq_paths=get_dirs(in_path)
@@ -58,10 +67,17 @@ def get_dirs(in_path):
     return ["%s/%s" %(in_path,dir_i) 
                 for dir_i in os.listdir(in_path)]
 
+def natural_keys(text):
+    return [ atoi(c) for c in re.split('(\d+)', text) ]
+
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
 def get_files(in_path):
     all_paths=[]
     for root, directories, filenames in os.walk(in_path):	
         all_paths+=["%s/%s" %(root,file_i) for file_i in filenames]
+    all_paths.sort(key=natural_keys)        
     return all_paths
 
 def make_dir(path):
@@ -69,4 +85,5 @@ def make_dir(path):
         os.mkdir(path)
 
 if __name__=="__main__":
-    make_dataset("../segm","dataset")
+    in_path="../normal/"
+    make_dataset(in_path+"segm",in_path+"dataset")
