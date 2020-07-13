@@ -30,5 +30,7 @@ def flood_segm(img_i):
     return [edges]
 
 if __name__=="__main__":
-    in_path="../normal/result"
-    segm(in_path,"../normal/cls",flood_segm)
+    in_path="../growth/pcloud"
+    out_path="../growth/imgs"
+    data.make_dir(out_path)
+    segm(in_path+"/result",out_path+"/segm")

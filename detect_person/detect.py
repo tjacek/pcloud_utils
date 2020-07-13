@@ -1,17 +1,23 @@
 import numpy as np
 import keras,cv2
-import data,preproc,cnn
+import data,preproc,cnn,img_segm
 from keras.models import load_model
 
-def exp(in_path):
-    dirs=["dataset","nn","segm","floor"]
-    paths={ dir_i:"%s/%s"%(in_path,dir_i) for dir_i in dirs}
+#def exp(in_path):
+#    dirs=["dataset","nn","segm","floor","clust",]
+#    paths={ dir_i:"%s/%s"%(in_path,dir_i) for dir_i in dirs}
 #    train_model(paths["dataset"],paths["nn"],n_epochs=1000)
-    get_persons(paths["segm"],paths["nn"],paths["floor"])
+#    get_persons(paths["segm"],paths["nn"],paths["floor"])
+#    img_segm.segm(paths["floor"],paths["clust"])
+
+def simple_exp(in_path,out_path):
+    dirs=["dataset","nn","result"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
+    train_model(paths["dataset"],paths["nn"],n_epochs=1000)
+    get_persons(in_path,paths["nn"],paths["result"])
 
 def get_persons(in_path,nn_path,out_path):
     clust_dict=data.read_clusters(in_path)
-    print(clust_dict)
     preproc_dict=preproc.preproc_clusters(clust_dict)
     model=load_model(nn_path)
     data.make_dir(out_path)
@@ -22,7 +28,6 @@ def get_persons(in_path,nn_path,out_path):
             X_i=np.array(segm_j)
             X_i=np.expand_dims(X_i,axis=-1)
             y_true=model.predict(X_i)
-            print(np.argmax(y_true,axis=1))
             y_true=np.nonzero(np.argmax(y_true,axis=1))[0]
             if(y_true.shape[0]>0):
                 person_segm_j=np.squeeze(X_i[y_true[0]])
@@ -42,4 +47,4 @@ def train_model(in_path,out_path=None,n_epochs=100):
     if(out_path):
         model.save(out_path)
 
-exp("../growth")
+simple_exp("../growth/imgs/segm","../growth/imgs")
