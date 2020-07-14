@@ -1,6 +1,33 @@
-import data#,img_segm
+import data,cnn
 import cv2,csv
 import numpy as np
+from keras.models import load_model
+
+def apply_reg(in_path,nn_path,out_path):
+    seq_dict=data.read_seqs(in_path)	
+    model=load_model(nn_path)
+    def helper(frame_i):
+        img_i=np.array([np.expand_dims(frame_i,axis=-1)])
+        r_i=model.predict(img_i)
+        print(r_i)
+        frame_i[int(r_i):,:]=0
+        return frame_i 
+    res_dict={cat_i:[helper(frame_i) for frame_i in seq_i] 
+                for cat_i,seq_i in seq_dict.items()}
+    data.save_seqs(res_dict,out_path)
+
+def train_reg(in_path,out_path,n_epochs=1000):
+    model=cnn.make_regression(img_shape=(96,96,1))
+    reg_dict=read_dict(in_path)
+    X,y=[],[]
+    for path_i,reg_i in reg_dict.items():
+        X.append(cv2.imread(path_i, cv2.IMREAD_GRAYSCALE))
+        y.append(float(reg_i))
+    X,y=np.array(X),np.array(y)
+    X=np.expand_dims(X,axis=-1)
+    model.fit(X,y,epochs=n_epochs,batch_size=y.shape[0])
+    if(out_path):
+        model.save(out_path)    
 
 def reg_dataset(in_path,out_path):
     dataset={}
@@ -46,5 +73,7 @@ def save_dict(reg_dict,out_path):
 in_path="../growth/imgs/result"
 out_path="test"
 
-reg_dataset(in_path,out_path)
-cut_floor("test","out")
+#reg_dataset(in_path,out_path)
+#cut_floor("test","out")
+#train_reg("test","reg_cnn",n_epochs=1000)
+apply_reg(in_path,"reg_cnn","result")
