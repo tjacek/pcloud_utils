@@ -12,6 +12,6 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-add_executable(pcloud_utils main.cpp files.cpp frames.cpp pclouds.cpp background.cpp)
+add_executable(pcloud_utils main.cpp files.cpp frames.cpp pclouds.cpp background.cpp segm.cpp)
 target_link_libraries(pcloud_utils ${OpenCV_LIBS})
 target_link_libraries(pcloud_utils ${PCL_LIBRARIES})
