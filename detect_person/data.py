@@ -2,6 +2,18 @@ import random,os,re
 from itertools import chain
 import cv2
 
+def transform_template(in_path,out_path,fun,single=True):
+    cats=get_dirs(in_path)
+    files.make_dir(out_path)
+    for cat_path_i in cats:
+        frames=read_frames(cat_path_j) 
+        if(single):
+            frames=[fun(frame_i) for frame_i in frames]
+        else:
+            frames=fun(frames)
+        out_i="%s/%s" % (out_path,cat_path_i.split('/')[-1])
+        save_frames(frames,out_i)
+
 def make_dataset(in_path,out_path,k=10):
     paths=[ get_dirs(cat_i)
             for cat_i in get_dirs(in_path)]
