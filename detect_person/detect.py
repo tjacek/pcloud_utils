@@ -1,14 +1,12 @@
+import tensorflow as tf
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+print("physical_devices-------------", len(physical_devices))
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 import numpy as np
 import keras,cv2
 import data,preproc,cnn,img_segm
 from keras.models import load_model
 
-#def exp(in_path):
-#    dirs=["dataset","nn","segm","floor","clust",]
-#    paths={ dir_i:"%s/%s"%(in_path,dir_i) for dir_i in dirs}
-#    train_model(paths["dataset"],paths["nn"],n_epochs=1000)
-#    get_persons(paths["segm"],paths["nn"],paths["floor"])
-#    img_segm.segm(paths["floor"],paths["clust"])
 
 def simple_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
@@ -43,8 +41,10 @@ def train_model(in_path,out_path=None,n_epochs=100):
     y= keras.utils.to_categorical(np.concatenate([y_pos,y_neg]))
     X=np.expand_dims(X,axis=-1)
     model=cnn.make_model((96,96,1))
-    model.fit(X,y,epochs=n_epochs,batch_size=y.shape[0])
+    model.fit(X,y,epochs=n_epochs,batch_size=64)
     if(out_path):
         model.save(out_path)
 
-simple_exp("../growth/imgs/segm","../growth/imgs")
+out_path="../../clf"
+train_model(out_path+"/dataset",out_path+"/nn",n_epochs=5000)
+#simple_exp("../../imgs/segm","../growth/imgs")

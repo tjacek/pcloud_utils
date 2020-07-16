@@ -18,7 +18,7 @@ def basic_model(img_shape=(64,64,1)):
     return x,input_img
 
 def make_model(img_shape=(64,64,1)):
-    x=basic_model(img_shape)
+    x,input_img=basic_model(img_shape)
     x=Dense(units=2,activation='softmax')(x)
     model = Model(input_img, x)
     model.compile(loss=keras.losses.categorical_crossentropy,
