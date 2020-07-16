@@ -12,24 +12,36 @@ def transform_template(in_path,out_path,fun,single=True):
             frames=fun(frames)
         out_i="%s/%s" % (out_path,cat_path_i.split('/')[-1])
         save_frames(frames,out_i)
-       
-def read_clusters(in_path):
-    cats=get_dirs(in_path)
-    clusters={}
-    for cat_i in cats:
-        cat_id=cat_i.split("/")[-1]
-        clusters[cat_id]={frame_j.split("/")[-1]:read_frames(frame_j) 
-                            for frame_j in get_dirs(cat_i)}
-    return clusters
 
-def save_clusters(cluster_dict,out_path):
+def cluster_template(in_path,out_path,fun):
+    cats=get_dirs(in_path)
     make_dir(out_path)
-    for name_i,seq_i in cluster_dict.items():
-        out_i="%s/%s" % (out_path,name_i)
-        make_dir(out_i)
-        for j,frame_j in enumerate(seq_i):
-            out_j="%s/%d" %(out_i,j)
-            save_frames(frame_j,out_j)
+    for cat_path_i in cats:
+        print(cat_path_i)
+        frames_path=get_dirs(cat_path_i)
+        out_i="%s/%s"  % (out_path, cat_path_i.split("/")[-1])   
+        trans_frames=[]
+        for frame_path_j in frames_path:
+            frames=read_frames(frame_path_j) 
+            trans_frames.append(fun(frames))
+        save_frames(trans_frames,out_i)
+#def read_clusters(in_path):
+#    cats=get_dirs(in_path)
+#    clusters={}
+#    for cat_i in cats:
+#        cat_id=cat_i.split("/")[-1]
+#        clusters[cat_id]={frame_j.split("/")[-1]:read_frames(frame_j) 
+#                            for frame_j in get_dirs(cat_i)}
+#    return clusters
+
+#def save_clusters(cluster_dict,out_path):
+#    make_dir(out_path)
+#    for name_i,seq_i in cluster_dict.items():
+#        out_i="%s/%s" % (out_path,name_i)
+#        make_dir(out_i)
+#        for j,frame_j in enumerate(seq_i):
+#            out_j="%s/%d" %(out_i,j)
+#            save_frames(frame_j,out_j)
 
 def read_dataset(in_path):
     seq_paths=get_dirs(in_path)
