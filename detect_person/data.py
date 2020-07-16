@@ -1,5 +1,4 @@
-import random,os,re
-from itertools import chain
+import os,re
 import cv2
 
 def transform_template(in_path,out_path,fun,single=True):
@@ -13,21 +12,6 @@ def transform_template(in_path,out_path,fun,single=True):
             frames=fun(frames)
         out_i="%s/%s" % (out_path,cat_path_i.split('/')[-1])
         save_frames(frames,out_i)
-
-def make_dataset(in_path,out_path,k=10):
-    paths=[ get_dirs(cat_i)
-            for cat_i in get_dirs(in_path)]
-    paths=list(chain.from_iterable(paths))
-    selected=[random.choice(paths) for i in range(k)]
-    make_dir(out_path)
-    pos_path=out_path+"/neg"
-    make_dir(pos_path)
-    neg_path=out_path+"/pos"
-    make_dir(neg_path)
-    frames=[]
-    for path_i in selected:
-        frames+=read_frames(path_i)
-    save_frames(frames,pos_path)    
        
 def read_clusters(in_path):
     cats=get_dirs(in_path)
@@ -97,9 +81,3 @@ def get_files(in_path):
 def make_dir(path):
     if(not os.path.isdir(path)):
         os.mkdir(path)
-
-if __name__=="__main__":
-    in_path="../growth/imgs/segm"
-    out_path="../growth/imgs"
-    make_dir(out_path)
-    make_dataset(in_path,out_path+"/dataset")
