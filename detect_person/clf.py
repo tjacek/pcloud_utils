@@ -5,10 +5,7 @@ from keras.models import load_model
 import preproc,cnn
 
 def make_dataset(in_path,out_path,k=10):
-    paths=[ data.get_dirs(cat_i)
-            for cat_i in data.get_dirs(in_path)]
-    paths=list(chain.from_iterable(paths))
-    selected=[random.choice(paths) for i in range(k)]
+    selected=random_paths(in_path)
     path_dict={ dir_i:("%s/%s" % (out_path,dir_i))  for dir_i in ["neg","pos"]}
     data.make_dir(out_path)
     for dir_i in path_dict.values():
@@ -17,6 +14,12 @@ def make_dataset(in_path,out_path,k=10):
     for path_i in selected:
         frames+=data.read_frames(path_i)
     data.save_frames(frames,path_dict['pos'])
+
+def random_paths(in_path,k=100):
+    paths=[ data.get_dirs(cat_i)
+            for cat_i in data.get_dirs(in_path)]
+    paths=list(chain.from_iterable(paths))
+    return [random.choice(paths) for i in range(k)]
 
 def get_persons(in_path,nn_path,out_path):
     model=load_model(nn_path)

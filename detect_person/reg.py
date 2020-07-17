@@ -1,9 +1,9 @@
-import data,cnn
 import cv2,csv
 import numpy as np
 from keras.models import load_model
 from scipy.ndimage import gaussian_filter1d
-
+import data,cnn,clf
+1
 #def apply_reg(in_path,nn_path,out_path):
 #    seq_dict=data.read_seqs(in_path)	
 #    model=load_model(nn_path)
@@ -30,6 +30,15 @@ from scipy.ndimage import gaussian_filter1d
 #    if(out_path):
 #        model.save(out_path)    
 
+def random_dataset(in_path,out_path,k=100):
+    frame_paths=clf.random_paths(in_path,k)
+    dataset={}
+    for path_i in frame_paths:
+        img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
+        r_i=detect_floor(img_i)
+        dataset[path_i]=r_i
+    save_dict(dataset,out_path)
+
 def reg_dataset(in_path,out_path):
     dataset={}
     seq_dict=data.read_seqs(in_path)
@@ -46,7 +55,10 @@ def detect_floor(img_i):
     ts=np.mean(binary,axis=0)
     ts=gaussian_filter1d(ts, 6)
     ts= np.sign(np.diff(ts))
-    k=np.where(np.diff(ts)==-2)[0][0]
+    extr=np.where(np.diff(ts)==-2)
+    if(extr[0].shape[0]==0):
+        return 96
+    k=extr[0][0]
     return k
 
 def cut_floor(in_path,out_path):
@@ -77,13 +89,9 @@ def save_dict(reg_dict,out_path):
         w = csv.writer(f)
         w.writerows(reg_dict.items())
 
-in_path="../clf/result"
-out_path="test"
+in_path="../../clf/result"
+out_path="../../cut"
 
 #reg_dataset(in_path,"reg.txt")
-cut_floor(in_path,out_path)
-
-#reg_dataset(in_path,out_path)
-#cut_floor("test","out")
-#train_reg("test","reg_cnn",n_epochs=1000)
-#apply_reg(in_path,"reg_cnn","result")
+#cut_floor(in_path,out_path)
+random_dataset(in_path,"reg.txt",k=100)
