@@ -1,8 +1,8 @@
 #include "segm.h"
 
 void pcloud_segmentation(PCloud & pcloud,std::string seq_path){
-//  std::vector<pcl::PointIndices> clust=min_cut(pcloud);
-  std::vector<pcl::PointIndices> clust=diff_of_normal(pcloud);
+  std::vector<pcl::PointIndices> clust=growth_segmentation(pcloud);
+//  std::vector<pcl::PointIndices> clust=diff_of_normal(pcloud);
 
   std::list<cv::Mat> new_frames;
   auto fun=[&pcloud](pcl::PointIndices in_i) -> cv::Mat{ 
@@ -92,64 +92,6 @@ std::vector <pcl::PointIndices> min_cut(PCloud & cloud){
   return clusters;
 }
 
-/*std::vector <pcl::PointIndices> diff_of_normal(PCloud & cloud){
-  double scale1,scale2,segradius;
-//  std::vector <pcl::PointIndices> cluster_indices;
-  pcl::search::Search<pcl::PointXYZ>::Ptr tree;
-  if (cloud->isOrganized ())
-  {
-    tree.reset (new pcl::search::OrganizedNeighbor<pcl::PointXYZ>());
-  }
-  else
-  {
-    tree.reset (new pcl::search::KdTree<pcl::PointXYZ>(false));
-  }
-    tree->setInputCloud (cloud);
-
-  pcl::NormalEstimationOMP<pcl::PointXYZ,pcl::PointNormal> ne;
-  ne.setInputCloud (cloud);
-  ne.setSearchMethod (tree);
-  ne.setViewPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(),std::numeric_limits<float>::max());
-  pcl::PointCloud<pcl::PointNormal>::Ptr normals_small_scale (new pcl::PointCloud<pcl::PointNormal>);
-  ne.setRadiusSearch (scale1);
-  ne.compute (*normals_small_scale);
-  std::cout << "Calculating normals for scale..." << scale2 << std::endl;
-  pcl::PointCloud<pcl::PointNormal>::Ptr normals_large_scale (new pcl::PointCloud<pcl::PointNormal>);
-  pcl::PointCloud<pcl::PointNormal>::Ptr doncloud (new pcl::PointCloud<pcl::PointNormal>);
-  copyPointCloud (*cloud, *doncloud);
-  std::cout << "Calculating DoN... " << std::endl;
-  // Create DoN operator
-  pcl::DifferenceOfNormalsEstimation<pcl::PointXYZ,pcl::PointNormal,pcl::PointNormal> don;
-  don.setInputCloud (cloud);
-  don.setNormalScaleLarge (normals_large_scale);
-  don.setNormalScaleSmall (normals_small_scale);
-
-  if (!don.initCompute ())
-  {
-    std::cerr << "Error: Could not initialize DoN feature operator" << std::endl;
-    exit (EXIT_FAILURE);
-  }
-
-  // Compute DoN
-  don.computeFeature (*doncloud);
-
-  pcl::search::KdTree<pcl::PointNormal>::Ptr segtree (new pcl::search::KdTree<pcl::PointNormal>);
-  segtree->setInputCloud(doncloud);
-
-  std::vector<pcl::PointIndices> cluster_indices;
-  pcl::EuclideanClusterExtraction<pcl::PointNormal> ec;
-
-  ec.setClusterTolerance (segradius);
-  ec.setMinClusterSize (50);
-  ec.setMaxClusterSize (100000);
-  ec.setSearchMethod (segtree);
-  ec.setInputCloud (doncloud);
-  ec.extract (cluster_indices);
-
-  return cluster_indices;
-}*/
-
-
 std::vector <pcl::PointIndices> diff_of_normal(PCloud & cloud){
   double scale1=5;
   double scale2=25;
@@ -215,29 +157,6 @@ std::vector <pcl::PointIndices> diff_of_normal(PCloud & cloud){
   // Compute DoN
   don.computeFeature (*doncloud);
 
-
-/*  // Build the condition for filtering
-  pcl::ConditionOr<PointNormal>::Ptr range_cond (
-    new pcl::ConditionOr<PointNormal> ()
-    );
-  range_cond->addComparison (pcl::FieldComparison<PointNormal>::ConstPtr (
-                               new pcl::FieldComparison<PointNormal> ("curvature", pcl::ComparisonOps::GT, threshold))
-                             );
-  // Build the filter
-  pcl::ConditionalRemoval<PointNormal> condrem;
-  condrem.setCondition (range_cond);
-  condrem.setInputCloud (doncloud);
-
-  pcl::PointCloud<PointNormal>::Ptr doncloud_filtered (new pcl::PointCloud<PointNormal>);
-
-  // Apply filter
-  condrem.filter (*doncloud_filtered);
-
-  doncloud = doncloud_filtered;
-
-  // Filter by magnitude
-  std::cout << "Clustering using EuclideanClusterExtraction with tolerance <= " << segradius << "..." << std::endl;
-*/
   pcl::search::KdTree<pcl::PointNormal>::Ptr segtree (new pcl::search::KdTree<pcl::PointNormal>);
   segtree->setInputCloud (doncloud);
 
