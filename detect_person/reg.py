@@ -1,4 +1,4 @@
-import cv2,csv
+import cv2,csv,os.path
 import numpy as np
 from keras.models import load_model
 from scipy.ndimage import gaussian_filter1d
@@ -70,7 +70,11 @@ def cut_floor(in_path,out_path):
     for path_i,reg_i in reg_dict.items():
         print(path_i)
         img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
-        out_i="%s/%s.png" % (out_path,path_i.split('/')[-1])
+        frame_id="_".join(path_i.split('/')[-2:])
+        frame_id= frame_id.replace("..","")
+        print(frame_id)
+        out_i="%s/%s.png" % (out_path,frame_id)
+        print(out_i)
         img_i[int(reg_i):,:]=0
         cv2.imwrite(out_i,img_i)
 
@@ -81,14 +85,20 @@ def read_dict(in_path):
     return dataset
 
 def save_dict(reg_dict,out_path):
+    paths=list(reg_dict.keys())
+    paths.sort(key=data.natural_keys) 
     with open(out_path, 'w') as f:  
         w = csv.writer(f)
-        w.writerows(reg_dict.items())
+        for path_i in paths:
+            w.writerow((path_i,reg_dict[path_i]))
+#        w.writerows(reg_dict.items())
 
 if __name__=="__main__":
     in_path="../../clf/result"
-    out_path="../../reg"    
+    out_path="../../reg"
     data.make_dir(out_path)
-    random_dataset(in_path,out_path+"/reg.txt",k=500)
-#    reg_dataset(out_path+"/dataset",out_path+"/reg.txt")
-    cut_floor(out_path+"/reg.txt",out_path+"/cut")
+    dirs=["reg.txt","cut"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
+    if(not os.path.exists(paths["reg.txt"])):
+        random_dataset(in_path,paths["reg.txt"],k=500)    
+    cut_floor(paths["reg.txt"],paths["cut"])
