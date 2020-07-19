@@ -54,7 +54,7 @@ def detect_floor(img_i):
     extr=np.where(np.diff(ts)==-2)
     if(extr[0].shape[0]==0):
         return 96
-    k=extr[0][0]
+    k=extr[-1][0]
     return k
 
 #def cut_floor(in_path,out_path):
@@ -81,7 +81,8 @@ def cut_floor(in_path,out_path):
 def read_dict(in_path):
     with open(in_path, mode='r') as infile:
         reader=csv.reader(infile)
-        dataset={rows[0]:rows[1] for rows in reader}
+        dataset={rows[0]:rows[1] for rows in reader
+                    if( len(rows)>1)}
     return dataset
 
 def save_dict(reg_dict,out_path):
@@ -100,5 +101,5 @@ if __name__=="__main__":
     dirs=["reg.txt","cut"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
     if(not os.path.exists(paths["reg.txt"])):
-        random_dataset(in_path,paths["reg.txt"],k=500)    
+        random_dataset(in_path,paths["reg.txt"],k=100)    
     cut_floor(paths["reg.txt"],paths["cut"])
