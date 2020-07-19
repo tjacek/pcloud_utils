@@ -13,18 +13,6 @@ def apply_reg(in_path,nn_path,out_path):
         return frame_i
     data.transform_template(in_path,out_path,helper)
 
-#    seq_dict=data.read_seqs(in_path)	
-#    model=load_model(nn_path)
-#    def helper(frame_i):
-#        img_i=np.array([np.expand_dims(frame_i,axis=-1)])
-#        r_i=model.predict(img_i)
-#        print(r_i)
-#        frame_i[int(r_i):,:]=0
-#        return frame_i 
-#    res_dict={cat_i:[helper(frame_i) for frame_i in seq_i] 
-#                for cat_i,seq_i in seq_dict.items()}
-#    data.save_seqs(res_dict,out_path)
-
 def train_reg(in_path,out_path,n_epochs=1000):
     model=cnn.make_regression(img_shape=(96,96,1))
     reg_dict=read_dict(in_path)
@@ -34,7 +22,7 @@ def train_reg(in_path,out_path,n_epochs=1000):
         y.append(float(reg_i))
     X,y=np.array(X),np.array(y)
     X=np.expand_dims(X,axis=-1)
-    model.fit(X,y,epochs=n_epochs,batch_size=y.shape[0])
+    model.fit(X,y,epochs=n_epochs,batch_size=64)
     if(out_path):
         model.save(out_path)    
 
@@ -69,22 +57,22 @@ def detect_floor(img_i):
     k=extr[0][0]
     return k
 
-def cut_floor(in_path,out_path):
-    def helper(img_i):
-        k=detect_floor(img_i)
-        img_i[k:,:]=0
-        return img_i
-    data.transform_template(in_path,out_path,helper)
-
 #def cut_floor(in_path,out_path):
-#    reg_dict=read_dict(in_path)
-#    data.make_dir(out_path)
-#    for path_i,reg_i in reg_dict.items():
-#        print(path_i)
-#        img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
-#        out_i="%s/%s.png" % (out_path,path_i.split('/')[-1])
-#        img_i[int(reg_i):,:]=0
-#        cv2.imwrite(out_i,img_i)
+#    def helper(img_i):
+#        k=detect_floor(img_i)
+#        img_i[k:,:]=0
+#        return img_i
+#    data.transform_template(in_path,out_path,helper)
+
+def cut_floor(in_path,out_path):
+    reg_dict=read_dict(in_path)
+    data.make_dir(out_path)
+    for path_i,reg_i in reg_dict.items():
+        print(path_i)
+        img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
+        out_i="%s/%s.png" % (out_path,path_i.split('/')[-1])
+        img_i[int(reg_i):,:]=0
+        cv2.imwrite(out_i,img_i)
 
 def read_dict(in_path):
     with open(in_path, mode='r') as infile:
@@ -97,16 +85,10 @@ def save_dict(reg_dict,out_path):
         w = csv.writer(f)
         w.writerows(reg_dict.items())
 
-import tensorflow as tf
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-print("physical_devices-------------", len(physical_devices))
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
-in_path="../../clf/result"
-out_path="../../cut"
-
-#reg_dataset(in_path,"reg.txt")
-#cut_floor(in_path,out_path)
-#random_dataset(in_path,"reg.txt",k=100)
-#train_reg("reg.txt","reg_nn",n_epochs=1000)
-apply_reg(in_path,"reg_nn","test_reg")
+if __name__=="__main__":
+    in_path="../../clf/result"
+    out_path="../../reg"    
+    data.make_dir(out_path)
+    random_dataset(in_path,out_path+"/reg.txt",k=500)
+#    reg_dataset(out_path+"/dataset",out_path+"/reg.txt")
+    cut_floor(out_path+"/reg.txt",out_path+"/cut")

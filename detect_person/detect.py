@@ -4,20 +4,20 @@ print("physical_devices-------------", len(physical_devices))
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 import numpy as np
 import keras,cv2
-#import data,preproc,cnn,img_segm
-import clf
-#from keras.models import load_model
+import clf,reg
 
-def simple_exp(in_path,out_path):
+def clf_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
     clf.train_model(paths["dataset"],paths["nn"],n_epochs=1000)
     clf.get_persons(in_path,paths["nn"],paths["result"])
 
+def reg_exp(in_path,out_path):
+    dirs=["reg.txt","nn","result"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
+    reg.train_reg(paths["reg.txt"],paths["nn"],n_epochs=1000)
+    reg.apply_reg(in_path,paths["nn"],paths["result"])
 
-
-out_path="../../clf"
-#train_model(out_path+"/dataset",out_path+"/nn",n_epochs=1000)
-#get_persons("test",out_path+"/nn","result")
-
-simple_exp("../grow","../clf")
+in_path="../../clf/result"
+out_path="../../reg"
+reg_exp(in_path,out_path)
