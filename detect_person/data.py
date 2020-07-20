@@ -36,15 +36,6 @@ def cluster_template(in_path,out_path,fun):
 #                            for frame_j in get_dirs(cat_i)}
 #    return clusters
 
-#def save_clusters(cluster_dict,out_path):
-#    make_dir(out_path)
-#    for name_i,seq_i in cluster_dict.items():
-#        out_i="%s/%s" % (out_path,name_i)
-#        make_dir(out_i)
-#        for j,frame_j in enumerate(seq_i):
-#            out_j="%s/%d" %(out_i,j)
-#            save_frames(frame_j,out_j)
-
 def read_dataset(in_path):
     seq_paths=get_dirs(in_path)
     return{ path_i.split('/')[-1]:read_frames(path_i) 
@@ -71,9 +62,14 @@ def read_frames(seq_i):
 def save_frames(frames,out_path):
     make_dir(out_path)
     for i,frame_i in enumerate(frames):
-        if(not frame_i is None):
-             out_i="%s/frame_%d.png" % (out_path,i)
-             cv2.imwrite(out_i,frame_i) 
+        if(frame_i is None):
+            break
+        if(type(frame_i)==list):
+            out_i="%s/frame_%d" % (out_path,i)
+            save_frames(frame_i,out_i)
+        else:
+            out_i="%s/frame_%d.png" % (out_path,i)
+            cv2.imwrite(out_i,frame_i) 
 
 def get_dirs(in_path):
     return ["%s/%s" %(in_path,dir_i) 
