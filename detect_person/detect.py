@@ -18,6 +18,6 @@ def reg_exp(in_path,out_path):
     reg.train_reg(paths["reg.txt"],paths["nn"],n_epochs=1000)
     reg.apply_reg(in_path,paths["nn"],paths["result"])
 
-in_path="../../clf/result"
-out_path="../../reg"
-reg_exp(in_path,out_path)
+in_path="../../segm"
+out_path="../../clf"
+clf_exp(in_path,out_path)
