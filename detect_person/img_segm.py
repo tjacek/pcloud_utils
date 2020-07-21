@@ -27,10 +27,13 @@ def clust_segm(img_i,k=4):
 def flood_segm(img_i):
     img_i=cv2.medianBlur(img_i,15)
     edges = cv2.Canny(img_i,20,200)
-    return edges
+    contours, hierarchy = cv2.findContours(edges,  
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+    cv2.drawContours(img_i, contours, -1, (0,255,0), 3)
+    return img_i
 
 if __name__=="__main__":
     in_path="../smooth"
-    out_path="clust"
+    out_path="clust2"
 #    data.make_dir(out_path)
-    segm(in_path,out_path)#,flood_segm)
+    segm(in_path,out_path,flood_segm)
