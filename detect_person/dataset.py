@@ -1,10 +1,11 @@
 import cv2,random,csv
 from itertools import chain
+from ast import literal_eval 
 import frames
 
 def cut_template(in_path,out_path,fun):
     reg_dict=read_dict(in_path)
-    data.make_dir(out_path)
+    frames.make_dir(out_path)
     for path_i,reg_i in reg_dict.items():
         print(path_i)
         img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
@@ -35,8 +36,9 @@ def random_paths(in_path,k=100):
 def read_dict(in_path):
     with open(in_path, mode='r') as infile:
         reader=csv.reader(infile)
-        dataset={rows[0]:rows[1] for rows in reader
-                    if( len(rows)>1)}
+        dataset={rows[0]:literal_eval(rows[1]) 
+                    for rows in reader
+                        if( len(rows)>1)}
     return dataset
 
 def save_dict(reg_dict,out_path):

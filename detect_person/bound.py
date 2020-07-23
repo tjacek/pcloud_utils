@@ -8,7 +8,14 @@ import dataset,frames
 def random_dataset(in_path,out_path,k=100):
     dataset.random_dataset(in_path,out_path,detect_person,k)
 
-#def cut_person():
+def cut_person(in_path,out_path):
+    def helper(reg_i,img_i):
+#        raise Exception( type(reg_i ))
+        x0,x1= reg_i#int(reg_i[0]),int(reg_i[1])
+        img_i[:,:x0]=0
+        img_i[:,x1:]=0
+        return img_i
+    dataset.cut_template(in_path,out_path,helper)
 
 def detect_person(img_i):
     img_i[img_i!=0]=1
@@ -40,4 +47,5 @@ def bar_plot(ts_i):
     return plot_i
 
 #aprox_bound("raw","test")
-random_dataset("raw","dataset.txt",k=100)
+#random_dataset("raw","dataset.txt",k=100)
+cut_person("dataset.txt","person")
