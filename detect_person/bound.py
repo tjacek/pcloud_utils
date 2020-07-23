@@ -1,20 +1,24 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter1d
-import data
+import dataset,frames
 
-def aprox_bound(in_path,out_path):
-	data.transform_template(in_path,out_path,fun)
+#def aprox_bound(in_path,out_path):
+#	frames.transform_template(in_path,out_path,fun)
 
-def fun(img_i):
+def random_dataset(in_path,out_path,k=100):
+    dataset.random_dataset(in_path,out_path,detect_person,k)
+
+#def cut_person():
+
+def detect_person(img_i):
     img_i[img_i!=0]=1
     ts_i=np.mean(img_i,axis=0)
     ts_i=gaussian_filter1d(ts_i, 6)    
-#    max_ts=np.argmax(ts_i)
     x0,x1=get_inflected(ts_i)
-    plot_i=bar_plot(ts_i)
-    plot_i[:,:x0]=0
-    plot_i[:,x1:]=0
-    return plot_i
+#    plot_i=bar_plot(ts_i)
+#    plot_i[:,:x0]=0
+#    plot_i[:,x1:]=0
+    return x0,x1
 
 def get_inflected(ts_i):
     max_ts=np.argmax(ts_i)
@@ -35,4 +39,5 @@ def bar_plot(ts_i):
         plot_i[k:,j]=100
     return plot_i
 
-aprox_bound("raw","test")
+#aprox_bound("raw","test")
+random_dataset("raw","dataset.txt",k=100)
