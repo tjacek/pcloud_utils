@@ -28,14 +28,6 @@ def train_reg(in_path,out_path,n_epochs=1000):
 
 def random_dataset(in_path,out_path,k=100):
     data.random_dataset(in_path,out_path,detect_floor,k)
-#def random_dataset(in_path,out_path,k=100):
-#    frame_paths=clf.random_paths(in_path,k)
-#    dataset={}
-#    for path_i in frame_paths:
-#        img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
-#        r_i=detect_floor(img_i)
-#        dataset[path_i]=r_i
-#    save_dict(dataset,out_path)
 
 def reg_dataset(in_path,out_path):
     dataset={}

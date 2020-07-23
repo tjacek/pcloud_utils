@@ -1,17 +1,46 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter1d
-import dataset,frames
+from keras.models import load_model
+
+import dataset,frames,cnn
+import cv2
 
 #def aprox_bound(in_path,out_path):
 #	frames.transform_template(in_path,out_path,fun)
+
+def apply_reg(in_path,nn_path,out_path):
+    model=load_model(nn_path)
+    def helper(frame_i):
+        r_i=model.predict(np.array([np.expand_dims(frame_i,axis=-1)]) )
+#        raise Exception(r_i[0][0])
+        x0,x1=int(r_i[0][0]),int(r_i[0][1])
+        print(r_i)
+        frame_i[:,:x0]=0
+        frame_i[:,x1:]=0
+        return frame_i
+    frames.transform_template(in_path,out_path,helper)
+
+
+def train_reg(in_path,out_path,n_epochs=1000):
+    reg_dict=dataset.read_dict(in_path)
+    X,y=[],[]
+    for path_i,reg_i in reg_dict.items():
+        X.append(cv2.imread(path_i, cv2.IMREAD_GRAYSCALE))
+        y.append(list(reg_i))
+    X,y=np.array(X),np.array(y)
+    X=np.expand_dims(X,axis=-1)
+    img_shape=(X.shape[1],X.shape[2],1)
+    model=cnn.make_regression(img_shape,2)
+    model.fit(X,y,epochs=n_epochs,batch_size=8)
+    if(out_path):
+        model.save(out_path)
 
 def random_dataset(in_path,out_path,k=100):
     dataset.random_dataset(in_path,out_path,detect_person,k)
 
 def cut_person(in_path,out_path):
     def helper(reg_i,img_i):
-#        raise Exception( type(reg_i ))
-        x0,x1= reg_i#int(reg_i[0]),int(reg_i[1])
+        x0,x1= reg_i
         img_i[:,:x0]=0
         img_i[:,x1:]=0
         return img_i
@@ -48,4 +77,6 @@ def bar_plot(ts_i):
 
 #aprox_bound("raw","test")
 #random_dataset("raw","dataset.txt",k=100)
-cut_person("dataset.txt","person")
+#cut_person("dataset.txt","person")
+#train_reg("dataset.txt","nn",n_epochs=1000)
+apply_reg("raw","nn","final")
