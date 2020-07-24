@@ -1,7 +1,6 @@
-import numpy as np
+import numpy as np,os.path
 from scipy.ndimage import gaussian_filter1d
 from keras.models import load_model
-
 import dataset,frames,cnn
 import cv2
 
@@ -70,8 +69,17 @@ def bar_plot(ts_i):
         plot_i[k:,j]=100
     return plot_i
 
-#aprox_bound("raw","test")
-#random_dataset("raw","dataset.txt",k=100)
+if __name__=="__main__":
+    in_path="../../clf/result"
+    out_path="../../bound"
+    frames.make_dir(out_path)
+#    random_dataset(in_path,out_path+"/dataset",k=100)
+    dirs=["dataset","cut"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
+    if(not os.path.exists(paths["dataset"])):
+        random_dataset(in_path,paths["dataset"],k=100)    
+    cut_person(paths["dataset"],paths["cut"])
+
 #cut_person("dataset.txt","person")
 #train_reg("dataset.txt","nn",n_epochs=1000)
-apply_reg("raw","nn","final")
+#apply_reg("raw","nn","final")
