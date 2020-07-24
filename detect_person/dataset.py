@@ -14,9 +14,17 @@ def cut_template(in_path,out_path,fun):
         print(frame_id)
         out_i="%s/%s.png" % (out_path,frame_id)
         print(out_i)
-#        img_i[int(reg_i):,:]=0
         img_i=fun(reg_i,img_i)
         cv2.imwrite(out_i,img_i)
+
+def train_dataset(reg_dict):
+    X,y=[],[]
+    for path_i,reg_i in reg_dict.items():
+        X.append(cv2.imread(path_i, cv2.IMREAD_GRAYSCALE))
+        y.append(list(reg_i))
+    X,y=np.array(X),np.array(y)
+    X=np.expand_dims(X,axis=-1)
+    return X,y
 
 def random_dataset(in_path,out_path,fun,k=100):
     frame_paths=random_paths(in_path,k)

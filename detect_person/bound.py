@@ -23,12 +23,7 @@ def apply_reg(in_path,nn_path,out_path):
 
 def train_reg(in_path,out_path,n_epochs=1000):
     reg_dict=dataset.read_dict(in_path)
-    X,y=[],[]
-    for path_i,reg_i in reg_dict.items():
-        X.append(cv2.imread(path_i, cv2.IMREAD_GRAYSCALE))
-        y.append(list(reg_i))
-    X,y=np.array(X),np.array(y)
-    X=np.expand_dims(X,axis=-1)
+    X,y=data.train_dataset(reg_dict)
     img_shape=(X.shape[1],X.shape[2],1)
     model=cnn.make_regression(img_shape,2)
     model.fit(X,y,epochs=n_epochs,batch_size=8)
