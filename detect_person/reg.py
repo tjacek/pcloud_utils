@@ -2,7 +2,7 @@ import cv2,os.path
 import numpy as np
 from keras.models import load_model
 from scipy.ndimage import gaussian_filter1d
-import data,cnn,clf
+import frames,cnn,clf
 
 def apply_reg(in_path,nn_path,out_path):
     model=load_model(nn_path)
@@ -11,7 +11,7 @@ def apply_reg(in_path,nn_path,out_path):
         print(r_i)
         frame_i[int(r_i):,:]=0
         return frame_i
-    data.transform_template(in_path,out_path,helper)
+    frames.transform_template(in_path,out_path,helper)
 
 def train_reg(in_path,out_path,n_epochs=1000):
     model=cnn.make_regression(img_shape=(96,96,1))

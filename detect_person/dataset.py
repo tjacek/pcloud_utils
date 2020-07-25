@@ -1,3 +1,4 @@
+import numpy as np
 import cv2,random,csv
 from itertools import chain
 from ast import literal_eval 

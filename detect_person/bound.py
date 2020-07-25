@@ -22,7 +22,7 @@ def apply_reg(in_path,nn_path,out_path):
 
 def train_reg(in_path,out_path,n_epochs=1000):
     reg_dict=dataset.read_dict(in_path)
-    X,y=data.train_dataset(reg_dict)
+    X,y=dataset.train_dataset(reg_dict)
     img_shape=(X.shape[1],X.shape[2],1)
     model=cnn.make_regression(img_shape,2)
     model.fit(X,y,epochs=n_epochs,batch_size=8)
@@ -73,7 +73,6 @@ if __name__=="__main__":
     in_path="../../clf/result"
     out_path="../../bound"
     frames.make_dir(out_path)
-#    random_dataset(in_path,out_path+"/dataset",k=100)
     dirs=["dataset","cut"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
     if(not os.path.exists(paths["dataset"])):
