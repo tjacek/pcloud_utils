@@ -9,7 +9,7 @@ import clf,reg,bound
 def clf_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
-    clf.train_model(paths["dataset"],paths["nn"],n_epochs=1000)
+#    clf.train_model(paths["dataset"],paths["nn"],n_epochs=1000)
     clf.get_persons(in_path,paths["nn"],paths["result"])
 
 def reg_exp(in_path,out_path):
@@ -24,6 +24,6 @@ def bound_exp(in_path,out_path):
     bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000)
     bound.apply_reg(in_path,paths["nn"],paths["result"])
 
-in_path="../../clf/result"
-out_path="../../bound"
-bound_exp(in_path,out_path)
+in_path="../../clean/segm"
+out_path="../../clean/clf"
+clf_exp(in_path,out_path)
