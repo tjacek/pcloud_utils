@@ -12,8 +12,9 @@ def transform_template(in_path,out_path,fun,single=True):
         else:
             frames=fun(frames)
         out_i="%s/%s" % (out_path,cat_path_i.split('/')[-1])
-        print(out_i)
-        save_frames(frames,out_i)
+        if(frames):
+            print(out_i)
+            save_frames(frames,out_i)
 
 def cluster_template(in_path,out_path,fun):
     cats=get_dirs(in_path)
@@ -51,16 +52,16 @@ def read_frames(seq_i):
     return [cv2.imread(path_j, cv2.IMREAD_GRAYSCALE)
                 for path_j in get_files(seq_i)]
 
-def save_frames(frames,out_path):
+def save_frames(frames,out_path,name="frame"):
     make_dir(out_path)
     for i,frame_i in enumerate(frames):
         if(frame_i is None):
             break
         if(type(frame_i)==list):
-            out_i="%s/frame_%d" % (out_path,i)
+            out_i="%s/%s_%d" % (out_path,name,i)
             save_frames(frame_i,out_i)
         else:
-            out_i="%s/frame_%d.png" % (out_path,i)
+            out_i="%s/%s_%d.png" % (out_path,name,i)
             cv2.imwrite(out_i,frame_i) 
 
 def get_dirs(in_path):
