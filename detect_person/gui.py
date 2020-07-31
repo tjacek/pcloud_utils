@@ -18,8 +18,8 @@ def classify_imgs(paths,out_path):
     frames.make_dir(out_path)
     pos_path,neg_path=["%s/%s" % (out_path,name_i)
                          for name_i in ["pos","neg"]]
-    for path_i in paths:
-        print(path_i)
+    for i,path_i in enumerate(paths):
+        print("%d:%s" % (i,path_i))
         pos,neg=[],[]
         imgs_i=frames.read_frames(path_i)
         for img_ij in imgs_i:
@@ -27,7 +27,7 @@ def classify_imgs(paths,out_path):
             key_ij=cv2.waitKey(0)
             cv2.destroyAllWindows()
             print(key_ij)
-            if(key_ij==115):
+            if(key_ij==115):# d key code
                 pos.append(img_ij)
             else:
             	neg.append(img_ij)
