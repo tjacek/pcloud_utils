@@ -35,7 +35,24 @@ def classify_imgs(paths,out_path):
         frames.save_frames(pos,pos_path,name_i)
         frames.save_frames(neg,neg_path,name_i)
 
+def on_action(x):
+    pass
+
+def reg_gui(paths):
+    if(type(paths)==str):
+        paths=frames.get_dirs(paths)
+    cv2.namedWindow('image')
+    for i,path_i in enumerate(paths):
+        print("%d:%s" % (i,path_i))
+        imgs_i=frames.read_frames(path_i)
+        for img_ij in imgs_i:
+            cv2.imshow('image',img_ij)
+            cv2.createTrackbar('R','image',0,240,on_action)
+            key_ij=cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
 #classify_imgs("final","test")
 in_path="../../clean/clf/result"
 seq_path="test"
-agum_dataset(in_path,seq_path,"agum")
+#agum_dataset(in_path,seq_path,"agum")
+reg_gui(seq_path)
