@@ -35,21 +35,42 @@ def classify_imgs(paths,out_path):
         frames.save_frames(pos,pos_path,name_i)
         frames.save_frames(neg,neg_path,name_i)
 
+class BoundInput(object):
+    def __init__(self):
+        self.name = 'image'
+        self.window=cv2.namedWindow(self.name)
+        self.x="X"
+        self.y="Y"
+
+    def __call__(self,img_i):
+        self.show(img_i)  
+        key_ij=cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def show(self,img_i):
+        cv2.imshow('image',img_i)
+        cv2.createTrackbar(self.x,self.name,0,img_i.shape[0],on_action)
+        cv2.createTrackbar(self.y,self.name,0,img_i.shape[1],on_action)
+
 def on_action(x):
     pass
 
 def reg_gui(paths):
     if(type(paths)==str):
         paths=frames.get_dirs(paths)
-    cv2.namedWindow('image')
+#    cv2.namedWindow('image')
+    bound_input=BoundInput()
     for i,path_i in enumerate(paths):
         print("%d:%s" % (i,path_i))
         imgs_i=frames.read_frames(path_i)
         for img_ij in imgs_i:
-            cv2.imshow('image',img_ij)
-            cv2.createTrackbar('R','image',0,240,on_action)
-            key_ij=cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            bound_input(img_ij)
+#            cv2.imshow('image',img_ij)
+#            cv2.createTrackbar('R','image',0,240,on_action)
+#            key_ij=cv2.waitKey(0)
+#            blue = cv2.getTrackbarPos('R', 'image')
+#            cv2.destroyAllWindows()
+            raise Exception("OK")
 
 #classify_imgs("final","test")
 in_path="../../clean/clf/result"
