@@ -42,15 +42,32 @@ class BoundInput(object):
         self.x="X"
         self.y="Y"
 
-    def __call__(self,img_i):
+    def __call__(self,img_i,x=0,y=0):
         self.show(img_i)  
-        key_ij=cv2.waitKey(0)
+        while(True):
+            key_j=cv2.waitKey(0)
+            x,y=self.get_input()
+            if(key_j==115):
+                break
+            self.cut(img_i,x,y)
         cv2.destroyAllWindows()
+        return x,y
 
     def show(self,img_i):
-        cv2.imshow('image',img_i)
-        cv2.createTrackbar(self.x,self.name,0,img_i.shape[0],on_action)
+        cv2.imshow(self.name,img_i)
+        cv2.createTrackbar(self.x,self.name,0,img_i.shape[1],on_action)
         cv2.createTrackbar(self.y,self.name,0,img_i.shape[1],on_action)
+
+    def get_input(self):
+        x = cv2.getTrackbarPos(self.x, self.name)
+        y = cv2.getTrackbarPos(self.y, self.name)
+        return x,y
+
+    def cut(self,img_i,x,y):
+        new_img=img_i.copy()
+        new_img[:,:x]=0
+        new_img[:,y:]=0
+        cv2.imshow(self.name,new_img)
 
 def on_action(x):
     pass
@@ -58,18 +75,12 @@ def on_action(x):
 def reg_gui(paths):
     if(type(paths)==str):
         paths=frames.get_dirs(paths)
-#    cv2.namedWindow('image')
     bound_input=BoundInput()
     for i,path_i in enumerate(paths):
         print("%d:%s" % (i,path_i))
         imgs_i=frames.read_frames(path_i)
         for img_ij in imgs_i:
             bound_input(img_ij)
-#            cv2.imshow('image',img_ij)
-#            cv2.createTrackbar('R','image',0,240,on_action)
-#            key_ij=cv2.waitKey(0)
-#            blue = cv2.getTrackbarPos('R', 'image')
-#            cv2.destroyAllWindows()
             raise Exception("OK")
 
 #classify_imgs("final","test")
