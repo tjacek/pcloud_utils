@@ -1,17 +1,13 @@
 import numpy as np,os.path
 from scipy.ndimage import gaussian_filter1d
 from keras.models import load_model
-import dataset,frames,cnn
+import dataset,frames,cnn,gui
 import cv2
-
-#def aprox_bound(in_path,out_path):
-#	frames.transform_template(in_path,out_path,fun)
 
 def apply_reg(in_path,nn_path,out_path):
     model=load_model(nn_path)
     def helper(frame_i):
         r_i=model.predict(np.array([np.expand_dims(frame_i,axis=-1)]) )
-#        raise Exception(r_i[0][0])
         x0,x1=int(r_i[0][0]),int(r_i[0][1])
         print(r_i)
         frame_i[:,:x0]=0
@@ -33,21 +29,18 @@ def random_dataset(in_path,out_path,k=100):
     dataset.random_dataset(in_path,out_path,detect_person,k)
 
 def cut_person(in_path,out_path):
-    def helper(reg_i,img_i):
+    def cut(reg_i,img_i):
         x0,x1= reg_i
         img_i[:,:x0]=0
         img_i[:,x1:]=0
         return img_i
-    dataset.cut_template(in_path,out_path,helper)
+    dataset.cut_template(in_path,out_path,cut)
 
 def detect_person(img_i):
     img_i[img_i!=0]=1
     ts_i=np.mean(img_i,axis=0)
     ts_i=gaussian_filter1d(ts_i, 6)    
     x0,x1=get_inflected(ts_i)
-#    plot_i=bar_plot(ts_i)
-#    plot_i[:,:x0]=0
-#    plot_i[:,x1:]=0
     return x0,x1
 
 def get_inflected(ts_i):
@@ -69,16 +62,25 @@ def bar_plot(ts_i):
         plot_i[k:,j]=100
     return plot_i
 
-if __name__=="__main__":
-    in_path="../../clf/result"
-    out_path="../../bound"
+def exp(in_path,out_path,use_gui=True,k=100):
     frames.make_dir(out_path)
     dirs=["dataset","cut"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
     if(not os.path.exists(paths["dataset"])):
-        random_dataset(in_path,paths["dataset"],k=100)    
-    cut_person(paths["dataset"],paths["cut"])
+        if(gui):
+            gui_gen(in_path,paths["dataset"],k=k)
+        else:
+            random_dataset(in_path,paths["dataset"],k=k)    
+    cut_person(paths["dataset"],paths["cut"])    
 
-#cut_person("dataset.txt","person")
-#train_reg("dataset.txt","nn",n_epochs=1000)
-#apply_reg("raw","nn","final")
+def gui_gen(in_path,out_path,k=20):
+    bound=gui.BoundInput() 
+    def helper(img_i):
+        start_x,start_y=detect_person(img_i.copy())
+        return bound(img_i,int(start_x),int(start_y))
+    dataset.random_dataset(in_path,out_path,helper,k)
+
+if __name__=="__main__":
+    in_path="../../clean/clf/result"
+    out_path="test2"
+    exp(in_path,out_path,k=20)

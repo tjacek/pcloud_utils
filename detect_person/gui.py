@@ -43,7 +43,7 @@ class BoundInput(object):
         self.y="Y"
 
     def __call__(self,img_i,x=0,y=0):
-        self.show(img_i)  
+        self.show(img_i,x,y)  
         while(True):
             key_j=cv2.waitKey(0)
             x,y=self.get_input()
@@ -53,10 +53,10 @@ class BoundInput(object):
         cv2.destroyAllWindows()
         return x,y
 
-    def show(self,img_i):
+    def show(self,img_i,x,y):
         cv2.imshow(self.name,img_i)
-        cv2.createTrackbar(self.x,self.name,0,img_i.shape[1],on_action)
-        cv2.createTrackbar(self.y,self.name,0,img_i.shape[1],on_action)
+        cv2.createTrackbar(self.x,self.name,x,img_i.shape[1],on_action)
+        cv2.createTrackbar(self.y,self.name,y,img_i.shape[1],on_action)
 
     def get_input(self):
         x = cv2.getTrackbarPos(self.x, self.name)
@@ -83,8 +83,9 @@ def reg_gui(paths):
             bound_input(img_ij)
             raise Exception("OK")
 
-#classify_imgs("final","test")
-in_path="../../clean/clf/result"
-seq_path="test"
-#agum_dataset(in_path,seq_path,"agum")
-reg_gui(seq_path)
+if __name__=="__main__":
+#   classify_imgs("final","test")
+    in_path="../../clean/clf/result"
+    seq_path="test"
+#   agum_dataset(in_path,seq_path,"agum")
+    reg_gui(seq_path)
