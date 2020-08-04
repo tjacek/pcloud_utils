@@ -40,10 +40,10 @@ def make_model(img_shape=(64,64,1)):
     return model
 
 def make_regression(img_shape=(64,64,1),n_vars=1):
-    x,input_img=basic_model(img_shape,n_dense=64)
+    x,input_img=large_img_model(img_shape,64)#basic_model(img_shape,n_dense=64)
     x=Dense(n_vars, activation="linear")(x)  
     model = Model(input_img, x)
     model.compile(loss='mean_squared_error',
-              optimizer=keras.optimizers.Adam(lr=0.001))
+              optimizer=keras.optimizers.Adam(lr=0.00001))
     model.summary()
     return model

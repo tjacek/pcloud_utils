@@ -1,5 +1,5 @@
 import numpy as np
-import random,data,keras
+import random,keras
 from itertools import chain
 from keras.models import load_model
 import preproc,cnn

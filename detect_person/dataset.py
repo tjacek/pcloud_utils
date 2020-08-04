@@ -33,7 +33,9 @@ def random_dataset(in_path,out_path,fun,k=100):
     else:
         frame_paths=all_seqs(in_path)
     dataset={}
-    for path_i in frame_paths:
+    size=len(frame_paths)
+    for i,path_i in enumerate(frame_paths):
+        print("%d/%d" % (i,size))
         img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
         r_i=fun(img_i)
         dataset[path_i]=r_i

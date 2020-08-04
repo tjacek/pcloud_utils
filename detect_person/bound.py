@@ -24,9 +24,6 @@ def train_reg(in_path,out_path,n_epochs=1000):
     if(out_path):
         model.save(out_path)
 
-#def random_dataset(in_path,out_path,k=100):
-#    dataset.random_dataset(in_path,out_path,detect_person,k)
-
 def cut_person(in_path,out_path):
     def cut(reg_i,img_i):
         x0,x1= reg_i
