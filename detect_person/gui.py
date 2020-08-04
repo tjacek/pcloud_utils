@@ -72,16 +72,16 @@ class BoundInput(object):
 def on_action(x):
     pass
 
-def reg_gui(paths):
-    if(type(paths)==str):
-        paths=frames.get_dirs(paths)
-    bound_input=BoundInput()
-    for i,path_i in enumerate(paths):
-        print("%d:%s" % (i,path_i))
-        imgs_i=frames.read_frames(path_i)
-        for img_ij in imgs_i:
-            bound_input(img_ij)
-            raise Exception("OK")
+#def reg_gui(paths):
+#    if(type(paths)==str):
+#        paths=frames.get_dirs(paths)
+#    bound_input=BoundInput()
+#    for i,path_i in enumerate(paths):
+#        print("%d:%s" % (i,path_i))
+#        imgs_i=frames.read_frames(path_i)
+#        for img_ij in imgs_i:
+#            bound_input(img_ij)
+#            raise Exception("OK")
 
 if __name__=="__main__":
 #   classify_imgs("final","test")

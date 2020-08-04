@@ -15,7 +15,6 @@ def apply_reg(in_path,nn_path,out_path):
         return frame_i
     frames.transform_template(in_path,out_path,helper)
 
-
 def train_reg(in_path,out_path,n_epochs=1000):
     reg_dict=dataset.read_dict(in_path)
     X,y=dataset.train_dataset(reg_dict)
@@ -25,8 +24,8 @@ def train_reg(in_path,out_path,n_epochs=1000):
     if(out_path):
         model.save(out_path)
 
-def random_dataset(in_path,out_path,k=100):
-    dataset.random_dataset(in_path,out_path,detect_person,k)
+#def random_dataset(in_path,out_path,k=100):
+#    dataset.random_dataset(in_path,out_path,detect_person,k)
 
 def cut_person(in_path,out_path):
     def cut(reg_i,img_i):
@@ -52,6 +51,8 @@ def get_inflected(ts_i):
         return 0,ts_i.shape[0]
     extr_i=extr_i[0]
     left=np.argmax( extr_i>max_ts)
+    if(left<2):
+        return 0,ts_i.shape[0]
     x0,x1= extr_i[left-2],extr_i[left] 
     return x0,x1
 
@@ -67,10 +68,10 @@ def exp(in_path,out_path,use_gui=True,k=100):
     dirs=["dataset","cut"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
     if(not os.path.exists(paths["dataset"])):
-        if(gui):
+        if(use_gui):
             gui_gen(in_path,paths["dataset"],k=k)
         else:
-            random_dataset(in_path,paths["dataset"],k=k)    
+            dataset.random_dataset(in_path,paths["dataset"],detect_person,k)
     cut_person(paths["dataset"],paths["cut"])    
 
 def gui_gen(in_path,out_path,k=20):
@@ -81,6 +82,6 @@ def gui_gen(in_path,out_path,k=20):
     dataset.random_dataset(in_path,out_path,helper,k)
 
 if __name__=="__main__":
-    in_path="../../clean/clf/result"
+    in_path="final"#"../../clean/clf/result"
     out_path="test2"
-    exp(in_path,out_path,k=20)
+    exp(in_path,out_path,k=None,use_gui=True)
