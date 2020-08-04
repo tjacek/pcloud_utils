@@ -27,14 +27,24 @@ def train_dataset(reg_dict):
     X=np.expand_dims(X,axis=-1)
     return X,y
 
-def random_dataset(in_path,out_path,fun,k=100):
-    frame_paths=random_paths(in_path,k)
+def random_dataset(in_path,out_path,fun,k=100):        
+    if(type(k)==int):
+        frame_paths=random_paths(in_path,k)
+    else:
+        frame_paths=all_seqs(in_path)
     dataset={}
     for path_i in frame_paths:
         img_i=cv2.imread(path_i, cv2.IMREAD_GRAYSCALE)
         r_i=fun(img_i)
         dataset[path_i]=r_i
     save_dict(dataset,out_path)
+
+def all_seqs(in_path):
+    paths=[]
+    for path_i in frames.get_dirs(in_path):
+        paths_ij=frames.get_dirs(path_i)
+        paths.append(random.choice(paths_ij))
+    return paths
 
 def random_paths(in_path,k=100):
     paths=[ frames.get_dirs(cat_i)
