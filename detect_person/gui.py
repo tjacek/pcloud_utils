@@ -1,11 +1,11 @@
 import cv2
-import frames
+import frames,dataset
 
 class KeyInput(object):
     def __init__(self, code=115):# d key code
         self.code = code
 
-    def __call__(self):
+    def __call__(self,img_ij):
         cv2.imshow('image',img_ij)
         key_ij=cv2.waitKey(0)
         cv2.destroyAllWindows()        
@@ -71,11 +71,18 @@ def classify_imgs(paths,out_path):
         pos,neg=[],[]
         imgs_i=frames.read_frames(path_i)
         for img_ij in imgs_i:
-            data_i= pos if(key_gui()) else neg
+            data_i= pos if(key_gui(img_ij)) else neg
             data_i.append(img_ij)
         name_i=get_id(path_i)        
         frames.save_frames(pos,pos_path,name_i)
         frames.save_frames(neg,neg_path,name_i)
+
+def show_imgs(in_path):
+    paths=dataset.all_seqs(in_path)
+    key_gui=KeyInput()
+    for i,img_i in enumerate(frames.read_frames(paths)):
+        print("%d" % i)
+        key_gui(img_i)
 
 #def reg_gui(paths):
 #    if(type(paths)==str):
@@ -90,7 +97,5 @@ def classify_imgs(paths,out_path):
 
 if __name__=="__main__":
 #   classify_imgs("final","test")
-    in_path="../../clean/clf/result"
-    seq_path="test"
-#   agum_dataset(in_path,seq_path,"agum")
-    reg_gui(seq_path)
+    in_path="../../clean/reg/result"
+    show_imgs(in_path)

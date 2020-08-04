@@ -49,8 +49,9 @@ def save_seqs(seq_dict,out_path):
         save_frames(seq_i,out_i)
 
 def read_frames(seq_i):
+    paths=seq_i if(type(seq_i)==list) else get_files(seq_i)
     return [cv2.imread(path_j, cv2.IMREAD_GRAYSCALE)
-                for path_j in get_files(seq_i)]
+                for path_j in paths]
 
 def save_frames(frames,out_path,name="frame"):
     make_dir(out_path)
