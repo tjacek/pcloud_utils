@@ -11,12 +11,12 @@ class KeyInput(object):
         cv2.destroyAllWindows()        
         return  (key_ij==self.code)
 
-class BoundInput(object):
-    def __init__(self):
+class TrackbarInput(object):
+    def __init__(self,bar_names,cut_fun):
         self.name = 'image'
         self.window=cv2.namedWindow(self.name)
-        self.bar_names=["X","Y"]
-        self.cut_fun=simple_cut
+        self.bar_names=bar_names#["X","Y"]
+        self.cut_fun=cut_fun#simple_cut
 
     def __call__(self,img_i,position):
         self.show(img_i,position)  
@@ -47,11 +47,27 @@ class BoundInput(object):
 def on_action(x):
     pass
 
+def get_bound2D():
+    return TrackbarInput(["X","Y"], simple_cut)
+
 def simple_cut(img_i,position):
     x,y=position
     img_i[:,:x]=0
     img_i[:,y:]=0
     return img_i
+
+def get_bound4D():
+    bar_names=["X","Y","width","height"]
+    return TrackbarInput(bar_names, rect_cut)
+
+def rect_cut(img_i,position):
+    x,y,width,height=position
+    img_i[:,:x]=0
+    img_i[:,x+width:]=0
+    img_i[:y,:]=0
+    img_i[y+height:,:]=0
+    return img_i
+
 
 def agum_dataset(in_path,seg_path,out_path):
     selected_paths=set([ path_i.split("/")[-1] 
