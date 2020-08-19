@@ -20,7 +20,7 @@ def train_reg(in_path,out_path,n_epochs=1000):
     X,y=dataset.train_dataset(reg_dict)
     img_shape=(X.shape[1],X.shape[2],1)
     model=cnn.make_regression(img_shape,2)
-    model.fit(X,y,epochs=n_epochs,batch_size=8)
+    model.fit(X,y,epochs=n_epochs,batch_size=16)
     if(out_path):
         model.save(out_path)
 
@@ -74,11 +74,12 @@ def exp(in_path,out_path,use_gui=True,k=100):
 def gui_gen(in_path,out_path,k=20):
     bound=gui.BoundInput() 
     def helper(img_i):
-        start_x,start_y=detect_person(img_i.copy())
-        return bound(img_i,int(start_x),int(start_y))
+        position=detect_person(img_i.copy())
+        position=[int(pos_i) for pos_i in position]
+        return bound(img_i,position)
     dataset.random_dataset(in_path,out_path,helper,k)
 
 if __name__=="__main__":
-    in_path="final"#"../../clean/clf/result"
+    in_path="../depth"
     out_path="test2"
     exp(in_path,out_path,k=None,use_gui=True)

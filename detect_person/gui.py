@@ -15,38 +15,43 @@ class BoundInput(object):
     def __init__(self):
         self.name = 'image'
         self.window=cv2.namedWindow(self.name)
-        self.x="X"
-        self.y="Y"
+        self.bar_names=["X","Y"]
+        self.cut_fun=simple_cut
 
-    def __call__(self,img_i,x=0,y=0):
-        self.show(img_i,x,y)  
+    def __call__(self,img_i,position):
+        self.show(img_i,position)  
         while(True):
             key_j=cv2.waitKey(0)
-            x,y=self.get_input()
+            position=self.get_input()
             if(key_j==115):
                 break
-            self.cut(img_i,x,y)
+            self.cut(img_i,position)
         cv2.destroyAllWindows()
-        return x,y
+        return position
 
-    def show(self,img_i,x,y):
+    def show(self,img_i,start):
         cv2.imshow(self.name,img_i)
-        cv2.createTrackbar(self.x,self.name,x,img_i.shape[1],on_action)
-        cv2.createTrackbar(self.y,self.name,y,img_i.shape[1],on_action)
+        size=img_i.shape[1]
+        for j,bar_j in enumerate(self.bar_names):
+            cv2.createTrackbar(bar_j,self.name,start[j],size,on_action)
 
     def get_input(self):
-        x = cv2.getTrackbarPos(self.x, self.name)
-        y = cv2.getTrackbarPos(self.y, self.name)
-        return x,y
+        return [cv2.getTrackbarPos(bar_j, self.name) 
+                    for bar_j in self.bar_names]
 
-    def cut(self,img_i,x,y):
+    def cut(self,img_i,position):
         new_img=img_i.copy()
-        new_img[:,:x]=0
-        new_img[:,y:]=0
+        new_img=self.cut_fun(new_img,position)
         cv2.imshow(self.name,new_img)
 
 def on_action(x):
     pass
+
+def simple_cut(img_i,position):
+    x,y=position
+    img_i[:,:x]=0
+    img_i[:,y:]=0
+    return img_i
 
 def agum_dataset(in_path,seg_path,out_path):
     selected_paths=set([ path_i.split("/")[-1] 
@@ -58,6 +63,13 @@ def agum_dataset(in_path,seg_path,out_path):
 def get_id(path_i):
     name_i= path_i.split("/")[-1]
     return "_".join(name_i.split("_")[-2:])
+
+def show_imgs(in_path):
+    paths=dataset.all_seqs(in_path)
+    key_gui=KeyInput()
+    for i,img_i in enumerate(frames.read_frames(paths)):
+        print("%d" % i)
+        key_gui(img_i)
 
 def classify_imgs(paths,out_path):
     if(type(paths)==str):
@@ -76,24 +88,6 @@ def classify_imgs(paths,out_path):
         name_i=get_id(path_i)        
         frames.save_frames(pos,pos_path,name_i)
         frames.save_frames(neg,neg_path,name_i)
-
-def show_imgs(in_path):
-    paths=dataset.all_seqs(in_path)
-    key_gui=KeyInput()
-    for i,img_i in enumerate(frames.read_frames(paths)):
-        print("%d" % i)
-        key_gui(img_i)
-
-#def reg_gui(paths):
-#    if(type(paths)==str):
-#        paths=frames.get_dirs(paths)
-#    bound_input=BoundInput()
-#    for i,path_i in enumerate(paths):
-#        print("%d:%s" % (i,path_i))
-#        imgs_i=frames.read_frames(path_i)
-#        for img_ij in imgs_i:
-#            bound_input(img_ij)
-#            raise Exception("OK")
 
 if __name__=="__main__":
 #   classify_imgs("final","test")
