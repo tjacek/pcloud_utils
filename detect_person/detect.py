@@ -22,8 +22,8 @@ def bound_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
     bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000)
-    bound.apply_reg(in_path,paths["nn"],paths["result"])
+#    bound.apply_reg(in_path,paths["nn"],paths["result"])
 
-in_path="../../clean/segm"
-out_path="../../clean/clf"
-clf_exp(in_path,out_path)
+in_path="../../clean/clf/result"
+out_path="test2"
+bound_exp(in_path,out_path)
