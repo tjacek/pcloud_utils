@@ -47,18 +47,6 @@ class TrackbarInput(object):
 def on_action(x):
     pass
 
-def get_bound4D():
-    bar_names=["X","Y","width","height"]
-    return TrackbarInput(bar_names, rect_cut)
-
-def rect_cut(img_i,position):
-    x,y,width,height=position
-    img_i[:,:x]=0
-    img_i[:,x+width:]=0
-    img_i[:y,:]=0
-    img_i[y+height:,:]=0
-    return img_i
-
 def agum_dataset(in_path,seg_path,out_path):
     selected_paths=set([ path_i.split("/")[-1] 
                         for path_i in frames.get_dirs(seg_path)])
