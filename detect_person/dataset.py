@@ -1,8 +1,22 @@
 import numpy as np
-import cv2,random,csv
+import cv2,random,csv,os.path
 from itertools import chain
 from ast import literal_eval 
 import frames
+
+def make_dataset_template(in_path,out_path,fun,k=100):
+    frames.make_dir(out_path)
+    dirs=["dataset","cut"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
+    if(not os.path.exists(paths["dataset"])):
+        fun(in_path,paths["dataset"],k)
+
+#        if(use_gui):
+#            gui_gen(in_path,paths["dataset"],k=k)
+#        else:
+#            dataset.random_dataset(in_path,paths["dataset"],detect_person,k)
+#    cut_person(paths["dataset"],paths["cut"])    
+
 
 def cut_template(in_path,out_path,fun):
     reg_dict=read_dict(in_path)
