@@ -47,15 +47,6 @@ class TrackbarInput(object):
 def on_action(x):
     pass
 
-def get_bound2D():
-    return TrackbarInput(["X","Y"], simple_cut)
-
-def simple_cut(img_i,position):
-    x,y=position
-    img_i[:,:x]=0
-    img_i[:,y:]=0
-    return img_i
-
 def get_bound4D():
     bar_names=["X","Y","width","height"]
     return TrackbarInput(bar_names, rect_cut)
@@ -67,7 +58,6 @@ def rect_cut(img_i,position):
     img_i[:y,:]=0
     img_i[y+height:,:]=0
     return img_i
-
 
 def agum_dataset(in_path,seg_path,out_path):
     selected_paths=set([ path_i.split("/")[-1] 
@@ -107,5 +97,5 @@ def classify_imgs(paths,out_path):
 
 if __name__=="__main__":
 #   classify_imgs("final","test")
-    in_path="../../clean/reg/result"
+    in_path="final"#"../../clean/reg/result"
     show_imgs(in_path)

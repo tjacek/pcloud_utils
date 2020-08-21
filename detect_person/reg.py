@@ -7,12 +7,12 @@ import gui,dataset
 
 def exp(in_path,out_path,k=100):
     fun=gui_gen
-    dataset.make_dataset_template(in_path,out_path,fun,k)
+    dataset.make_dataset_template(in_path,out_path,fun,simple_cut,k)
 
 def gui_gen(in_path,out_path,k=20):
     reg_gui=get_bound2D() 
     def helper(img_i):
-        position=[0,0]
+        position=[0,int(img_i.shape[0]/2)]
         return reg_gui(img_i,position)
     dataset.random_dataset(in_path,out_path,helper,k)
 

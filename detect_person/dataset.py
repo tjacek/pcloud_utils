@@ -4,19 +4,14 @@ from itertools import chain
 from ast import literal_eval 
 import frames
 
-def make_dataset_template(in_path,out_path,fun,k=100):
+def make_dataset_template(in_path,out_path,fun,cut_fun,k=100):
     frames.make_dir(out_path)
     dirs=["dataset","cut"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}    
     if(not os.path.exists(paths["dataset"])):
         fun(in_path,paths["dataset"],k)
-
-#        if(use_gui):
-#            gui_gen(in_path,paths["dataset"],k=k)
-#        else:
-#            dataset.random_dataset(in_path,paths["dataset"],detect_person,k)
-#    cut_person(paths["dataset"],paths["cut"])    
-
+    if(cut_fun):
+        cut_template(paths["dataset"],paths["cut"],cut_fun)    
 
 def cut_template(in_path,out_path,fun):
     reg_dict=read_dict(in_path)
@@ -29,7 +24,7 @@ def cut_template(in_path,out_path,fun):
         print(frame_id)
         out_i="%s/%s.png" % (out_path,frame_id)
         print(out_i)
-        img_i=fun(reg_i,img_i)
+        img_i=fun(img_i,reg_i)
         cv2.imwrite(out_i,img_i)
 
 def train_dataset(reg_dict):
