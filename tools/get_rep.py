@@ -17,7 +17,8 @@ def format_names(in_path,out_path):
         name_i="%s_%s_1"%(cat_i, person_i)
         in_i="%s/%s"%(in_path,path_i)
         out_i="%s/%s"%(out_path,name_i)
-        shutil.copytree(in_i, out_i)
+        if(not os.path.exists(out_i)):
+            shutil.copytree(in_i, out_i)
 
 def person_rep(in_path,out_path):
     paths=os.listdir(in_path)
