@@ -23,7 +23,8 @@ class TrackbarInput(object):
         while(True):
             key_j=cv2.waitKey(0)
             position=self.get_input()
-            if(key_j==115):
+            print(key_j)
+            if(key_j==32):
                 break
             self.cut(img_i,position)
         cv2.destroyAllWindows()
