@@ -4,6 +4,20 @@ from keras.models import Model
 from keras.layers import Input,Conv2D,MaxPooling2D
 from keras.layers import Flatten,Dense,Dropout
 from keras import regularizers
+from keras.models import load_model
+
+class ModelDecorator(object):
+    def __init__(self, model):
+        self.model = model
+
+    def predict(self,frame_i):
+        view_i= np.expand_dims(frame_i,axis=-1)
+        view_i= np.expand_dims(view_i,axis=0)
+        return self.model.predict(view_i)   
+
+def read_model(nn_path):    
+    model=load_model(nn_path)
+    return ModelDecorator(model)
 
 def basic_model(img_shape=(64,64,1),n_dense=32):
     input_img = Input(shape=img_shape)

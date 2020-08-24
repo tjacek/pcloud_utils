@@ -1,6 +1,5 @@
 import numpy as np
 import frames,gui,dataset,cnn
-from keras.models import load_model
 
 def train_reg(in_path,out_path,n_epochs=1000):
     reg_dict=dataset.read_dict(in_path)
@@ -12,11 +11,9 @@ def train_reg(in_path,out_path,n_epochs=1000):
         model.save(out_path)
 
 def apply_reg(in_path,nn_path,out_path):
-    model=load_model(nn_path)
-    def helper(frame_i):
-        view_i= np.expand_dims(frame_i,axis=-1)
-        view_i= np.expand_dims(view_i,axis=0)
-        r_i=model.predict(view_i)        
+    model=cnn.get_model(nn_path)
+    def helper(frame_i):       
+        r_i=model.predict(frame_i)
         position=int(r_i[0][0]),int(r_i[0][1])
         return simple_cut(frame_i,position) #frame_i
     frames.transform_template(in_path,out_path,helper)
