@@ -1,6 +1,5 @@
 import numpy as np
 import gui,dataset,cnn,frames
-#from keras.models import load_model
 
 def train_reg(in_path,out_path,n_epochs=1000):
     reg_dict=dataset.read_dict(in_path)
@@ -18,6 +17,16 @@ def apply_reg(in_path,nn_path,out_path):
         position=[int(r_i[0][i]) for i in range(4)]
         return rect_cut(frame_i,position) #frame_i
     frames.transform_template(in_path,out_path,helper)    
+
+def apply_box(in_path,nn_path,out_path):
+    model=cnn.read_model(nn_path)
+    def helper(frames):     
+        reg_result=[model.predict(frame_i) for frame_i in frames ]
+        position=common_box(reg_result)
+#        position=[int(r_i[0][i]) for i in range(4)]
+        return [rect_cut(frame_i,position) 
+                    for frame_i in frames]
+    frames.transform_template(in_path,out_path,helper,False)    
 
 def exp(in_path,out_path,k=100):
     fun=gui_gen
@@ -42,6 +51,15 @@ def rect_cut(img_i,position):
     img_i[:y,:]=0
     img_i[y+height:,:]=0
     return img_i
+
+def common_box(reg_result):
+    reg_result=np.squeeze(np.array(reg_result))
+    x0,y0=reg_result[:,0],reg_result[:,1]
+    x1=x0+reg_result[:,2]
+    y1=y0+reg_result[:,3]
+    x0,y0=np.amin(x0),np.amin(y0)
+    x1,y1=np.amax(x1),np.amax(y1)
+    return int(x0),int(y0),int(x1-x0),int(y1-y0)
 
 if __name__=="__main__":
     in_path="final"#"../depth"
