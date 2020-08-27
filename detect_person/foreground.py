@@ -15,12 +15,15 @@ def gui_gen(in_path,out_path,k=20):
 
 def get_fore1D():
     bar_names=["Z"]
-    return gui.TrackbarInput(bar_names, back_cut)
+    return gui.TrackbarInput(bar_names,back_cut,get_max_z)
 
 def back_cut(img_i,position):
     z=position[0]
     img_i[img_i>z]=0
     return img_i
+
+def get_max_z(img_i):
+    return np.amax(img_i)	
 
 if __name__=="__main__":
     in_path="final"#"../depth"

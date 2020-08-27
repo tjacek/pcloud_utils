@@ -12,11 +12,14 @@ class KeyInput(object):
         return  (key_ij==self.code)
 
 class TrackbarInput(object):
-    def __init__(self,bar_names,cut_fun):
+    def __init__(self,bar_names,cut_fun,get_range=None):
         self.name = 'image'
         self.window=cv2.namedWindow(self.name)
-        self.bar_names=bar_names#["X","Y"]
-        self.cut_fun=cut_fun#simple_cut
+        self.bar_names=bar_names
+        self.cut_fun=cut_fun
+        if(not get_range):
+            get_range=basic_rage
+        self.get_range=get_range
 
     def __call__(self,img_i,position):
         self.show(img_i,position)  
@@ -32,7 +35,8 @@ class TrackbarInput(object):
 
     def show(self,img_i,start):
         cv2.imshow(self.name,img_i)
-        size=img_i.shape[1]
+#        size=img_i.shape[1]
+        size=self.get_range(img_i)
         for j,bar_j in enumerate(self.bar_names):
             cv2.createTrackbar(bar_j,self.name,start[j],size,on_action)
 
@@ -47,6 +51,9 @@ class TrackbarInput(object):
 
 def on_action(x):
     pass
+
+def basic_rage(img_i):
+    return img_i.shape[1]
 
 def agum_dataset(in_path,seg_path,out_path):
     selected_paths=set([ path_i.split("/")[-1] 
