@@ -4,7 +4,7 @@ print("physical_devices-------------", len(physical_devices))
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 import numpy as np
 import keras,cv2
-import clf,reg,bound
+import clf,reg,bound,cnn
 
 def clf_exp(in_path,out_path,n_epochs=100):
     dirs=["dataset","nn","result"]
@@ -13,17 +13,17 @@ def clf_exp(in_path,out_path,n_epochs=100):
     clf.get_persons(in_path,paths["nn"],paths["result"])
 
 def reg_exp(in_path,out_path):
-    dirs=["reg.txt","nn","result"]
+    dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
-    reg.train_reg(paths["reg.txt"],paths["nn"],n_epochs=1000)
+    reg.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=2)
     reg.apply_reg(in_path,paths["nn"],paths["result"])
 
 def bound_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
-    bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000)
-#    bound.apply_reg(in_path,paths["nn"],paths["result"])
+    bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=4)
+    bound.apply_box(in_path,paths["nn"],paths["result"])
 
-in_path="../../clean/clf/result"
+in_path="final"#"../../clean/clf/result"
 out_path="test2"
 bound_exp(in_path,out_path)

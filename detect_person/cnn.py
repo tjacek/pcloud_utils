@@ -5,6 +5,7 @@ from keras.layers import Input,Conv2D,MaxPooling2D
 from keras.layers import Flatten,Dense,Dropout
 from keras import regularizers
 from keras.models import load_model
+import dataset
 
 class ModelDecorator(object):
     def __init__(self, model):
@@ -18,6 +19,15 @@ class ModelDecorator(object):
 def read_model(nn_path):    
     model=load_model(nn_path)
     return ModelDecorator(model)
+
+def train_reg(in_path,out_path,n_epochs=1000,size=2):
+    reg_dict=dataset.read_dict(in_path)
+    X,y=dataset.train_dataset(reg_dict)
+    img_shape=(X.shape[1],X.shape[2],1)
+    model=make_regression(img_shape,size)
+    model.fit(X,y,epochs=n_epochs,batch_size=16)
+    if(out_path):
+        model.save(out_path)
 
 def basic_model(img_shape=(64,64,1),n_dense=32):
     input_img = Input(shape=img_shape)

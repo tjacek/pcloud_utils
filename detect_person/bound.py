@@ -1,15 +1,6 @@
 import numpy as np
 import gui,dataset,cnn,frames
 
-def train_reg(in_path,out_path,n_epochs=1000):
-    reg_dict=dataset.read_dict(in_path)
-    X,y=dataset.train_dataset(reg_dict)
-    img_shape=(X.shape[1],X.shape[2],1)
-    model=cnn.make_regression(img_shape,4)
-    model.fit(X,y,epochs=n_epochs,batch_size=16)
-    if(out_path):
-        model.save(out_path)
-
 def apply_reg(in_path,nn_path,out_path):
     model=cnn.read_model(nn_path)
     def helper(frame_i):     
