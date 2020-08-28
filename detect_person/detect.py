@@ -4,7 +4,7 @@ print("physical_devices-------------", len(physical_devices))
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 import numpy as np
 import keras,cv2
-import clf,reg,bound,cnn
+import clf,reg,bound,cnn,foreground
 
 def clf_exp(in_path,out_path,n_epochs=100):
     dirs=["dataset","nn","result"]
@@ -24,6 +24,12 @@ def bound_exp(in_path,out_path):
     bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=4)
     bound.apply_box(in_path,paths["nn"],paths["result"])
 
-in_path="final"#"../../clean/clf/result"
-out_path="test2"
-bound_exp(in_path,out_path)
+def foreground_exp(in_path,out_path):
+    dirs=["dataset","nn","result"]
+    paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
+    cnn.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=1)
+    foreground.apply_cut(in_path,paths["nn"],paths["result"])
+
+in_path="../../simple/bound/result"
+out_path="../../simple/fore/"
+foreground_exp(in_path,out_path)
