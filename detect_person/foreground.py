@@ -1,5 +1,13 @@
 import numpy as np
-import gui,dataset
+import gui,dataset,cnn,frames
+
+def apply_cut(in_path,nn_path,out_path):
+    model=cnn.read_model(nn_path)
+    def helper(frame_i):     
+        r_i=model.predict(frame_i)
+        position=[int(r_i[0][0])]
+        return back_cut(frame_i,position) #frame_i
+    frames.transform_template(in_path,out_path,helper)    
 
 def exp(in_path,out_path,k=100):
     dataset.make_dataset_template(in_path,out_path,gui_gen,back_cut,k)
@@ -26,6 +34,6 @@ def get_max_z(img_i):
     return np.amax(img_i)	
 
 if __name__=="__main__":
-    in_path="final"#"../depth"
-    out_path="test2"
+    in_path="../../simple/bound/result"#"../depth"
+    out_path="../../simple/fore"
     exp(in_path,out_path,k=None)
