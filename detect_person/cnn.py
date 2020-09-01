@@ -71,3 +71,6 @@ def make_regression(img_shape=(64,64,1),n_vars=1):
               optimizer=keras.optimizers.Adam(lr=0.00001))
     model.summary()
     return model
+
+if __name__=="__main__":
+    make_regression(img_shape=(320,240,1),n_vars=1)
