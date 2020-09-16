@@ -1,19 +1,40 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 import cv2,sys
 from ast import literal_eval 
-import dataset,foreground
+import dataset,foreground,bound
+
+class State(object):
+    def __init__(self,data_dict,path,cut):
+        self.data_dict=data_dict
+        self.path=path
+        self.cut=cut
+
+    def __getitem__(self,frame_i):
+        return str(self.data_dict[frame_i])
+    
+    def keys(self):
+        return list(self.data_dict.keys())
+
+    def show(self,frame_i,text_i):
+        self.data_dict[frame_i]=text_i
+        position=literal_eval(text_i)
+        img_i=cv2.imread(frame_i, cv2.IMREAD_GRAYSCALE)
+        img_i=self.cut(img_i,position)
+        cv2.imshow(frame_i,img_i)
+
+    def save(self,path_i):
+        dataset.save_dict(self.data_dict,path_i)
 
 class ComboBoxDemo(QtWidgets.QWidget):
 
-    def __init__(self,data_dict,path):
+    def __init__(self, state):
         super().__init__()
-        self.data_dict=data_dict
-        self.path=path 
-        
+        self.state=state
+
         self.delta=50
         self.comboBox = QtWidgets.QComboBox(self)
         self.comboBox.setGeometry(self.delta, 50, 400, 35)
-        self.comboBox.addItems(list(data_dict.keys()))
+        self.comboBox.addItems(self.state.keys() )
         self.comboBox.currentTextChanged.connect(self.getComboValue)
 
         self.btn = QtWidgets.QPushButton('Show', self)
@@ -31,31 +52,28 @@ class ComboBoxDemo(QtWidgets.QWidget):
         self.pathbox = QtWidgets.QLineEdit(self)
         self.pathbox.move(50, 150)
         self.pathbox.resize(280,40)
-        self.pathbox.setText(self.path)
+        self.pathbox.setText(self.state.path)
 
     def getComboValue(self):
         frame_i=self.comboBox.currentText()
-        value_i=self.data_dict[frame_i]
-        self.textbox.setText(str(value_i))
+        value_i=self.state[frame_i] 
+        self.textbox.setText(value_i)
 
     def show_frame(self):
         frame_i=self.comboBox.currentText()
         text_i=self.textbox.text()
-        self.data_dict[frame_i]=text_i
-        position=literal_eval(text_i)
-        img_i=cv2.imread(frame_i, cv2.IMREAD_GRAYSCALE)
-        img_i=foreground.back_cut(img_i,position)
-        cv2.imshow(frame_i,img_i)
+        self.state.show(frame_i,text_i)
 
     def save(self):
         path_i=self.pathbox.text()
         print("Saves %s" % path_i)
-        dataset.save_dict(self.data_dict,path_i)
+        self.state.save(path_i)
 
-in_path="test2/dataset"
+in_path="../../dataset/dataset"
 data_i=dataset.read_dict(in_path)
 
+state=State(data_i,in_path,bound.rect_cut)
 app = QtWidgets.QApplication(sys.argv)
-demo = ComboBoxDemo(data_i,in_path)
+demo = ComboBoxDemo(state)
 demo.show()
 sys.exit(app.exec_())
