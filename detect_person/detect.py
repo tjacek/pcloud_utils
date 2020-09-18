@@ -21,7 +21,7 @@ def reg_exp(in_path,out_path):
 def bound_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
-    bound.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=4)
+#    cnn.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=4)
     bound.apply_box(in_path,paths["nn"],paths["result"])
 
 def foreground_exp(in_path,out_path):
@@ -30,6 +30,6 @@ def foreground_exp(in_path,out_path):
     cnn.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=1)
     foreground.apply_cut(in_path,paths["nn"],paths["result"])
 
-in_path="../../simple/bound/result"
-out_path="../../simple/fore/"
-foreground_exp(in_path,out_path)
+in_path="../../raw"
+out_path="../../dataset"
+bound_exp(in_path,out_path)

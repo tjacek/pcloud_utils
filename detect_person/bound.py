@@ -14,7 +14,6 @@ def apply_box(in_path,nn_path,out_path):
     def helper(frames):     
         reg_result=[model.predict(frame_i) for frame_i in frames ]
         position=common_box(reg_result)
-#        position=[int(r_i[0][i]) for i in range(4)]
         return [rect_cut(frame_i,position) 
                     for frame_i in frames]
     frames.transform_template(in_path,out_path,helper,False)    
@@ -53,6 +52,6 @@ def common_box(reg_result):
     return int(x0),int(y0),int(x1-x0),int(y1-y0)
 
 if __name__=="__main__":
-    in_path="final"#"../depth"
-    out_path="test2"
+    in_path="../../raw"
+    out_path="../../dataset"
     exp(in_path,out_path,k=None)
