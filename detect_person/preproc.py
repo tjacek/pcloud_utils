@@ -1,6 +1,5 @@
 import cv2
 from collections import defaultdict
-import data
 
 def preproc_exp(in_path,out_path):
     d=data.read_dataset(in_path)
