@@ -54,6 +54,7 @@ class ComboBoxDemo(QtWidgets.QWidget):
         self.pathbox.move(50, 150)
         self.pathbox.resize(280,40)
         self.pathbox.setText(self.state.path)
+        self.getComboValue()
 
     def getComboValue(self):
         frame_i=self.comboBox.currentText()
