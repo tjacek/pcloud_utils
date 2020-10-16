@@ -1,8 +1,8 @@
 import numpy as np
-#import random,keras
+import keras#random
 #from itertools import chain
-#from keras.models import load_model
-#import preproc,cnn
+from keras.models import load_model
+import cnn#preproc
 import frames,dataset
 
 def make_dataset(in_path,out_path):
@@ -25,9 +25,9 @@ def read_clf_dataset(in_path):
     X,y=[],[]
     for i,cat_i in enumerate(dataset.keys()):
         for frame_j in dataset[cat_i]:
-            print(frame_j.shape)
             X.append(frame_j)
             y.append(i)
+    y=keras.utils.to_categorical(y)
     return np.array(X),y
 
 def no_action_split(seq_i):
@@ -38,37 +38,33 @@ def no_action_split(seq_i):
 
 def train_model(in_path,out_path=None,n_epochs=100,imgs_shape=None):
     X,y=read_clf_dataset(in_path)
-    raise Exception( y)
-#def get_persons(in_path,nn_path,out_path,imgs_shape=None):
-#    model=load_model(nn_path)
-#    def helper(frames):
-#        if(imgs_shape):
-#            frames= preproc.standarize(frames,imgs_shape) 
-#        X_i=np.array(frames)
-#        X_i=np.expand_dims(X_i,axis=-1)
-#        y_true=model.predict(X_i)
-#        k=np.argmax(y_true[:,1])
-#        person=np.squeeze(X_i[k] )
-#        return person
-#    data.cluster_template(in_path,out_path,helper)
+    X=np.expand_dims(X,axis=-1)
+    n_cats=y.shape[-1]
+    img_shape=(128,128,1)
+    model=cnn.make_model(img_shape=img_shape,n_cats=n_cats)
+    model.fit(X,y,epochs=n_epochs,batch_size=8)
+    if(out_path):
+        model.save(out_path)
 
-#def train_model(in_path,out_path=None,n_epochs=100,imgs_shape=None):
-#    raw_dict=data.read_dataset(in_path)
-#    preproc_dict=preproc.preproc_dict(raw_dict) if(imgs_shape) else raw_dict
-#    X_pos,X_neg=preproc_dict['pos'],preproc_dict['neg']
-#    y_pos,y_neg=np.repeat(0,len(X_pos)),np.repeat(1,len(X_neg))
-#    X=np.array(X_pos+X_neg)
-#    y= keras.utils.to_categorical(np.concatenate([y_pos,y_neg]))
-#    X=np.expand_dims(X,axis=-1)
-#    imgs_shape=(imgs_shape[0],imgs_shape[1],1) if(imgs_shape) else (X.shape[1],X.shape[2],1) 
-#    model=cnn.make_model(imgs_shape)
-#    model.fit(X,y,epochs=n_epochs,batch_size=8)#64)
-#    if(out_path):
-#        model.save(out_path)
+def filtr_seg(in_path,nn_path,out_path):
+    model=load_model(nn_path)
+    dataset=frames.read_dataset(in_path)
+    frames.make_dir(out_path)
+    for name_i,seq_i in dataset.items():
+        print(name_i)
+        seq_i=np.array(seq_i)
+        seq_i=np.expand_dims(seq_i,axis=-1)
+        result_i=model.predict(seq_i)
+        no_action=np.argmax(result_i,axis=1)
+        new_seq=[np.squeeze(seq_i[k])  
+                    for k,no_action in enumerate(no_action)
+                       if(no_action==0)]
+        out_i="%s/%s" % (out_path,name_i)
+        frames.save_frames(new_seq,out_i)
 
 if __name__=="__main__":
     in_path="../../box"
     out_path="dataset"
-#    data.make_dir(out_path)
 #    make_dataset(in_path,out_path)
-    train_model("dataset",out_path=None)
+#    train_model("dataset",out_path="nn")
+    filtr_seg(in_path,"nn","out")

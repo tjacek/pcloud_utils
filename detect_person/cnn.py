@@ -53,9 +53,9 @@ def large_img_model(img_shape=(64,64,1),n_dense=64):
     x=Dropout(0.5)(x)
     return x,input_img
 
-def make_model(img_shape=(64,64,1)):
+def make_model(img_shape=(64,64,1),n_cats=2):
     x,input_img=large_img_model(img_shape)
-    x=Dense(units=2,activation='softmax')(x)
+    x=Dense(units=n_cats,activation='softmax')(x)
     model = Model(input_img, x)
     model.compile(loss=keras.losses.categorical_crossentropy,
 #              optimizer=keras.optimizers.SGD(lr=0.001,  momentum=0.9, nesterov=True))
