@@ -1,25 +1,30 @@
-import numpy as np
-import random,keras
-from itertools import chain
-from keras.models import load_model
-import preproc,cnn
+#import numpy as np
+#import random,keras
+#from itertools import chain
+#from keras.models import load_model
+#import preproc,cnn
+import frames
 
-def make_dataset(in_path,out_path,k=100):
-    selected=random_paths(in_path,k)
-    path_dict={ dir_i:("%s/%s" % (out_path,dir_i))  for dir_i in ["neg","pos"]}
-    data.make_dir(out_path)
-    for dir_i in path_dict.values():
-        data.make_dir(dir_i)
-    frames=[]
-    for path_i in selected:
-        frames+=data.read_frames(path_i)
-    data.save_frames(frames,path_dict['pos'])
+def make_dataset(in_path,out_path):
+    paths=frames.get_dict(in_path)    
+    seqs=[frames.get_files(path_i) for path_i in paths]
+    pos,neg=[],[]
+    for seq_i in seqs:
+        pos_i,neg_i=no_action_split(seq_i)
+        pos+=pos_i
+        neg+=neg_i
+    frames.make_dir(out_path)
+    for i,cat in enumerate([pos,neg]):
+        cat_path="%s/%d" % (out_path,i)
+        frames_i=frames.read_frames(cat)
+        frames.save_frames(frames_i,cat_path)
+        print(cat_path)
 
-def random_paths(in_path,k=100):
-    paths=[ data.get_dirs(cat_i)
-            for cat_i in data.get_dirs(in_path)]
-    paths=list(chain.from_iterable(paths))
-    return [random.choice(paths) for i in range(k)]
+def no_action_split(seq_i):
+    neg=[seq_i[0],seq_i[-1]]
+    center=int(len(seq_i)/2)
+    pos=[seq_i[center]]
+    return neg,pos
 
 def get_persons(in_path,nn_path,out_path,imgs_shape=None):
     model=load_model(nn_path)
@@ -43,14 +48,13 @@ def train_model(in_path,out_path=None,n_epochs=100,imgs_shape=None):
     y= keras.utils.to_categorical(np.concatenate([y_pos,y_neg]))
     X=np.expand_dims(X,axis=-1)
     imgs_shape=(imgs_shape[0],imgs_shape[1],1) if(imgs_shape) else (X.shape[1],X.shape[2],1) 
-#    raise Exception(imgs_shape)
     model=cnn.make_model(imgs_shape)
     model.fit(X,y,epochs=n_epochs,batch_size=8)#64)
     if(out_path):
         model.save(out_path)
 
 if __name__=="__main__":
-    in_path="../../segm"
-    out_path="../../clf"
-    data.make_dir(out_path)
+    in_path="../../box"
+    out_path="dataset"
+#    data.make_dir(out_path)
     make_dataset(in_path,out_path)
