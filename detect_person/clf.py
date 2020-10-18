@@ -1,6 +1,5 @@
 import numpy as np
 import keras#random
-#from itertools import chain
 from keras.models import load_model
 import cnn#preproc
 import frames,dataset
@@ -40,7 +39,7 @@ def train_model(in_path,out_path=None,n_epochs=100,imgs_shape=None):
     X,y=read_clf_dataset(in_path)
     X=np.expand_dims(X,axis=-1)
     n_cats=y.shape[-1]
-    img_shape=(128,128,1)
+    img_shape=X.shape[1:]
     model=cnn.make_model(img_shape=img_shape,n_cats=n_cats)
     model.fit(X,y,epochs=n_epochs,batch_size=8)
     if(out_path):
@@ -52,6 +51,7 @@ def filtr_seg(in_path,nn_path,out_path):
     frames.make_dir(out_path)
     for name_i,seq_i in dataset.items():
         print(name_i)
+        print(seq_i[0].shape)
         seq_i=np.array(seq_i)
         seq_i=np.expand_dims(seq_i,axis=-1)
         result_i=model.predict(seq_i)
@@ -63,7 +63,7 @@ def filtr_seg(in_path,nn_path,out_path):
         frames.save_frames(new_seq,out_i)
 
 if __name__=="__main__":
-    in_path="../../box"
+    in_path="../../full"
     out_path="dataset"
 #    make_dataset(in_path,out_path)
 #    train_model("dataset",out_path="nn")
