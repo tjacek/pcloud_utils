@@ -2,7 +2,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 import cv2,sys
 import os.path
 from ast import literal_eval 
-import dataset,foreground,bound
+import dataset,foreground,bound,frames
 
 class State(object):
     def __init__(self,data_dict,path,cut):
@@ -76,9 +76,18 @@ class ComboBoxDemo(QtWidgets.QWidget):
         out_path="%s/%s" % (os.path.dirname(in_path),"cut")
         dataset.cut_template(in_path,out_path,self.state.cut)
 
-in_path="../../dataset/dataset"
-out_path="../../dataset/cut"
-data_i=dataset.read_dict(in_path)
+def read_dataset(in_path,default=[30,30,30,30]):
+    if(os.path.isdir(in_path)):
+        paths=frames.get_files(in_path)
+        data_i={ path_i:default for path_i in paths}
+        in_path="%s.csv" % in_path
+    else:
+        data_i=dataset.read_dict(in_path)
+    return data_i,in_path
+
+in_path="../../forth/dataset"
+out_path="../../forth/cut"
+data_i,in_path=read_dataset(in_path)
 
 state=State(data_i,in_path,bound.rect_cut)
 app = QtWidgets.QApplication(sys.argv)
