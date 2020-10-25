@@ -72,6 +72,7 @@ class ComboBoxDemo(QtWidgets.QWidget):
         self.state.save(path_i)
 
     def closeEvent(self, event):
+        self.save()
         in_path,fun=self.state.path,self.state.cut
         out_path="%s/%s" % (os.path.dirname(in_path),"cut")
         dataset.cut_template(in_path,out_path,self.state.cut)
@@ -100,7 +101,7 @@ def get_fore_gui(in_path):
     app = QtWidgets.QApplication(sys.argv)
     return ComboBoxDemo(state),app
 
-in_path="../../forth/dataset"
+in_path="../../forth/dataset.csv"
 #out_path="../../forth/cut"
 demo,app=get_fore_gui(in_path)
 demo.show()
