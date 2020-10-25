@@ -27,9 +27,10 @@ def bound_exp(in_path,out_path):
 def foreground_exp(in_path,out_path):
     dirs=["dataset","nn","result"]
     paths={ dir_i:"%s/%s"%(out_path,dir_i) for dir_i in dirs}
+    paths["dataset"]="%s.csv" % paths["dataset"]
     cnn.train_reg(paths["dataset"],paths["nn"],n_epochs=1000,size=1)
     foreground.apply_cut(in_path,paths["nn"],paths["result"])
 
-in_path="../../raw"
-out_path="../../dataset"
-bound_exp(in_path,out_path)
+in_path="../../forth/frames"
+out_path="../../forth/clean/"
+foreground_exp(in_path,out_path)
