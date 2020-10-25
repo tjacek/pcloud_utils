@@ -76,21 +76,32 @@ class ComboBoxDemo(QtWidgets.QWidget):
         out_path="%s/%s" % (os.path.dirname(in_path),"cut")
         dataset.cut_template(in_path,out_path,self.state.cut)
 
-def read_dataset(in_path,default=[30,30,30,30]):
+def read_dataset(in_path,default=None):
     if(os.path.isdir(in_path)):
         paths=frames.get_files(in_path)
         data_i={ path_i:default for path_i in paths}
         in_path="%s.csv" % in_path
+        dataset.save_dict(data_i,in_path)
     else:
         data_i=dataset.read_dict(in_path)
     return data_i,in_path
 
-in_path="../../forth/dataset"
-out_path="../../forth/cut"
-data_i,in_path=read_dataset(in_path)
+def get_rect_gui(in_path):
+    default=[30,30,30,30]
+    data_i,in_path=read_dataset(in_path,default)
+    state=State(data_i,in_path,bound.rect_cut)
+    app = QtWidgets.QApplication(sys.argv)
+    return ComboBoxDemo(state),app
 
-state=State(data_i,in_path,bound.rect_cut)
-app = QtWidgets.QApplication(sys.argv)
-demo = ComboBoxDemo(state)
+def get_fore_gui(in_path):
+    default=[90]
+    data_i,in_path=read_dataset(in_path,default)
+    state=State(data_i,in_path,foreground.back_cut)
+    app = QtWidgets.QApplication(sys.argv)
+    return ComboBoxDemo(state),app
+
+in_path="../../forth/dataset"
+#out_path="../../forth/cut"
+demo,app=get_fore_gui(in_path)
 demo.show()
 sys.exit(app.exec_())

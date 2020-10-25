@@ -27,13 +27,13 @@ def get_fore1D():
 
 def back_cut(img_i,position):
     z=position[0]
-    img_i[img_i>z]=0
+    img_i[img_i<z]=0
     return img_i
 
 def get_max_z(img_i):
     return np.amax(img_i)	
 
 if __name__=="__main__":
-    in_path="../../simple/bound/result"#"../depth"
-    out_path="../../simple/fore"
+    in_path="../../forth/frames"#"../depth"
+    out_path="../../forth/"
     exp(in_path,out_path,k=None)
